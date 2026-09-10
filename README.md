@@ -31,3 +31,7 @@ may be production-ready, while others may be works in progress or learning exper
 ## Contact
 
 For collaboration or client work, feel free to get in touch through my GitHub profile.
+
+##footer
+
+this is a footer 
