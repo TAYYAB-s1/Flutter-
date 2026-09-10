@@ -1,0 +1,48 @@
+name: sanitary_store
+description: Voice-search sanitary/hardware inventory app.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Phase 1 — local storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Phase 3 — add/edit products (image picking, unique ids)
+  image_picker: ^1.1.2
+  uuid: ^4.4.0
+
+  # Phase 4 — voice search
+  speech_to_text: ^7.0.0
+  permission_handler: ^12.0.3
+
+  # Phase 5 — fuzzy matching for search (voice + typed)
+  string_similarity: ^2.0.0
+
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/categories/
+    # add assets/products/ here too only if you end up bundling any
+    # static product images — otherwise leave it out since real
+    # product photos are picked at runtime, not bundled.
+
+# ---
+# NOTE: package versions above are reasonable current picks but always
+# run `flutter pub outdated` before you install, in case newer stable
+# versions exist by the time you start each phase — don't blindly trust
+# a version pinned months earlier in a doc like this.
