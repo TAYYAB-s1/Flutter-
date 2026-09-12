@@ -4,7 +4,7 @@
 // so any screen (e.g. Settings, built in a later phase) can change the
 // theme mode with `ThemeController.of(context).setThemeMode(mode)` —
 // no external state management package needed.
-
+// NOTE: This is a functional Phase 1 version. The Settings screen and theme
 import 'package:flutter/material.dart';
 import 'constants/app_theme.dart';
 import 'screens/home_screen.dart';
