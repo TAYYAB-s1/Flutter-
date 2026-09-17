@@ -16,6 +16,7 @@ import '../widgets/mission_card.dart';
 import '../widgets/power_meter_bar.dart';
 import '../widgets/xp_rank_badge.dart';
 import 'category_screen.dart';
+import 'skill_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,11 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _openSkill(SkillModel skill) {
-    // TODO(Phase 3): replace with Navigator.push to SkillDetailScreen.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${skill.title} — Mission Detail coming in Phase 3')),
+  Future<void> _openSkill(SkillModel skill) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => SkillDetailScreen(skill: skill)),
     );
+    // Refresh in case favorites/progress changed while on the detail screen.
+    _loadData();
   }
 
   /// Finds a skill that's been started but not finished, for the
