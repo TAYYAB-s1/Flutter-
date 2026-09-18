@@ -101,9 +101,18 @@ cd diyhub
 # Install dependencies
 flutter pub get
 
+# Generate the app launcher icon (Android + iOS)
+flutter pub run flutter_launcher_icons
+
 # Run the app
 flutter run
 ```
+
+> The app icon source lives at `assets/icon/icon.png` (1024×1024), generated from `assets/icon/icon_source.svg`. Replace either file and re-run the `flutter_launcher_icons` command above to update the launcher icon.
+
+### Permissions
+
+DIYHub needs **no special device permissions** — no camera, storage, or internet access — since all content is bundled locally and all progress is saved on-device with `shared_preferences`.
 
 ---
 
@@ -125,11 +134,12 @@ flutter run
 ## 🗺️ Development Roadmap
 
 - [x] **Phase 1** — Project setup, theming, data models, local persistence, seeded content
-- [ ] **Phase 2** — Home & Category screens with full comic styling
-- [ ] **Phase 3** — Skill Detail & Lesson screens
-- [ ] **Phase 4** — Progress & Favorites screens
-- [ ] **Phase 5** — Settings screen & theme switching
-- [ ] **Phase 6** — Polish: empty states, animations, app icon
+- [x] **Phase 2** — Home & Category screens with full comic styling
+- [x] **Phase 3** — Skill Detail & Lesson screens, XP/rank-up celebration
+- [x] **Phase 4** — Progress & Favorites screens
+- [x] **Phase 5** — Settings screen (theme toggle, Hero Tier change, data reset)
+- [x] **Phase 6** — Polish: app icon, empty/loading states, permissions review
+
 
 ---
 
