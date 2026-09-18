@@ -12,7 +12,7 @@ Instead of plain lessons, DIYHub frames everything as **Missions** with **XP rew
 - **University:** UMT (University of Management & Technology)
 - **Department:** Artificial Intelligence
 - **Semester:** Spring 2026
-- **Project Type:** Semester Mobile Application Project
+- **Project Type:** Personal Project
 
 ---
 
