@@ -37,7 +37,7 @@ class AppTheme {
         ),
       ),
       textTheme: _textTheme(AppColors.lightTextPrimary, AppColors.lightTextSecondary),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.lightSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -132,7 +132,7 @@ class AppTheme {
         ),
       ),
       textTheme: _textTheme(AppColors.darkTextPrimary, AppColors.darkTextSecondary),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.darkSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
