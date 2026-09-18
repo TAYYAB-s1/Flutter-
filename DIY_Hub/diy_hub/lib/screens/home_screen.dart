@@ -18,6 +18,7 @@ import '../widgets/xp_rank_badge.dart';
 import 'category_screen.dart';
 import 'favorites_screen.dart';
 import 'progress_screen.dart';
+import 'settings_screen.dart';
 import 'skill_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -159,6 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return ProgressScreen(onOpenSkill: _openSkill);
       case 3:
         return FavoritesScreen(onOpenSkill: _openSkill);
+      case 4:
+        return const SettingsScreen();
       default:
         return Center(
           child: Text(

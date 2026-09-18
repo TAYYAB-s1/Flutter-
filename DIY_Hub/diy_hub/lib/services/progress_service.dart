@@ -142,4 +142,17 @@ class ProgressService {
     }
     return false;
   }
+
+  // ── Full reset ───────────────────────────────────────────────────
+
+  /// Wipes every piece of local data: onboarding status, theme, XP/rank,
+  /// Hero Tier, and all mission progress/favorites. Used by the Settings
+  /// screen's "Reset All Data" action.
+  Future<void> resetAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyOnboardingComplete);
+    await prefs.remove(_keyThemeMode);
+    await prefs.remove(_keyUserStats);
+    await prefs.remove(_keyAllProgress);
+  }
 }
