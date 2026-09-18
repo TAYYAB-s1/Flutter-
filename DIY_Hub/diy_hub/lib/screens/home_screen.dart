@@ -16,6 +16,8 @@ import '../widgets/mission_card.dart';
 import '../widgets/power_meter_bar.dart';
 import '../widgets/xp_rank_badge.dart';
 import 'category_screen.dart';
+import 'favorites_screen.dart';
+import 'progress_screen.dart';
 import 'skill_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -153,6 +155,10 @@ class _HomeScreenState extends State<HomeScreen> {
           initialCategory: _categoryFilter,
           onOpenSkill: _openSkill,
         );
+      case 2:
+        return ProgressScreen(onOpenSkill: _openSkill);
+      case 3:
+        return FavoritesScreen(onOpenSkill: _openSkill);
       default:
         return Center(
           child: Text(
