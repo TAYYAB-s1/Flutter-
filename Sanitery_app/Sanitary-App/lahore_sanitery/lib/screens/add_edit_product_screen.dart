@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import '../models/product.dart';
 import '../services/product_repository.dart';
@@ -18,14 +19,18 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _priceController;
+  final TextEditingController _customCategoryController =
+      TextEditingController();
 
   String? _selectedCategory;
+  bool _showCustomCategoryField = false;
   String? _pickedImagePath;
   String? _existingImagePath;
+  bool _isSavingImage = false;
 
   bool get _isEditing => widget.existingProduct != null;
 
-  final List<String> _categories = const [
+  static const List<String> _defaultCategories = [
     'Pipes',
     'Nuts & Bolts',
     'Taps',
@@ -49,13 +54,20 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   void dispose() {
     _nameController.dispose();
     _priceController.dispose();
+    _customCategoryController.dispose();
     super.dispose();
   }
 
-  /// Shows a simple choice sheet — Camera or Gallery — instead of
-  /// always jumping straight to the gallery. This is what the client
-  /// was missing: previously there was no way to take a fresh photo
-  /// directly, only pick an existing one.
+  /// Union of the default 6 categories and any custom categories the
+  /// client has already created on other products, so the dropdown
+  /// always shows everything currently in use plus the standard set.
+  List<String> _buildCategoryOptions() {
+    final existing = ProductRepository().getAllCategories();
+    final combined = <String>{..._defaultCategories, ...existing};
+    final sorted = combined.toList()..sort();
+    return sorted;
+  }
+
   Future<void> _showImageSourceOptions() async {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
@@ -98,6 +110,12 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     await _pickImage(source);
   }
 
+  /// FIX: image_picker returns a path inside the app's CACHE
+  /// directory, which Android is free to wipe at any time to free up
+  /// space (this is exactly what happened to the client's photos).
+  /// This copies the picked file into the app's permanent DOCUMENTS
+  /// directory, which Android does not clear automatically, and
+  /// gives it a unique name so multiple products never collide.
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     try {
@@ -105,17 +123,29 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         source: source,
         imageQuality: 80,
       );
-      if (picked != null) {
-        setState(() => _pickedImagePath = picked.path);
-      }
+      if (picked == null) return;
+
+      setState(() => _isSavingImage = true);
+
+      final appDir = await getApplicationDocumentsDirectory();
+      final extension = picked.path.split('.').last;
+      final permanentFileName = '${const Uuid().v4()}.$extension';
+      final permanentFile = await File(picked.path)
+          .copy('${appDir.path}/$permanentFileName');
+
+      setState(() {
+        _pickedImagePath = permanentFile.path;
+        _isSavingImage = false;
+      });
     } catch (e) {
+      setState(() => _isSavingImage = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               source == ImageSource.camera
                   ? 'Could not open camera. Check camera permission in phone settings.'
-                  : 'Could not open gallery.',
+                  : 'Could not save the photo. Please try again.',
             ),
           ),
         );
@@ -125,9 +155,14 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
   Future<void> _saveProduct() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedCategory == null) {
+
+    final finalCategory = _showCustomCategoryField
+        ? _customCategoryController.text.trim()
+        : _selectedCategory;
+
+    if (finalCategory == null || finalCategory.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
+        const SnackBar(content: Text('Please select or enter a category')),
       );
       return;
     }
@@ -138,7 +173,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     final product = Product(
       id: widget.existingProduct?.id ?? const Uuid().v4(),
       name: _nameController.text.trim(),
-      category: _selectedCategory!,
+      category: finalCategory,
       price: double.parse(_priceController.text.trim()),
       imagePath: finalImagePath,
       aliases: widget.existingProduct?.aliases ?? [],
@@ -181,14 +216,25 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   }
 
   Widget _buildImagePreview() {
+    if (_isSavingImage) {
+      return const Center(child: CircularProgressIndicator());
+    }
     if (_pickedImagePath != null) {
       return Image.file(File(_pickedImagePath!), fit: BoxFit.cover);
     }
     if (_existingImagePath != null && _existingImagePath!.isNotEmpty) {
       if (_existingImagePath!.startsWith('http')) {
-        return Image.network(_existingImagePath!, fit: BoxFit.cover);
+        return Image.network(
+          _existingImagePath!,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _missingImagePlaceholder(),
+        );
       }
-      return Image.file(File(_existingImagePath!), fit: BoxFit.cover);
+      return Image.file(
+        File(_existingImagePath!),
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _missingImagePlaceholder(),
+      );
     }
     return const Center(
       child: Column(
@@ -203,8 +249,27 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     );
   }
 
+  Widget _missingImagePlaceholder() {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.image_not_supported, size: 32, color: Colors.grey),
+          SizedBox(height: 8),
+          Text(
+            'Original photo missing —\ntap to add a new one',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final categoryOptions = _buildCategoryOptions();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEditing ? 'Edit Product' : 'Add Product'),
@@ -227,7 +292,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: _showImageSourceOptions,
+                onTap: _isSavingImage ? null : _showImageSourceOptions,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
@@ -264,22 +329,65 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
               const Text('Category',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                items: _categories
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-                onChanged: (value) => setState(() => _selectedCategory = value),
-                decoration: InputDecoration(
-                  hintText: 'Select category',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              if (!_showCustomCategoryField)
+                DropdownButtonFormField<String>(
+                  value: _selectedCategory,
+                  items: categoryOptions
+                      .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                      .toList(),
+                  onChanged: (value) =>
+                      setState(() => _selectedCategory = value),
+                  decoration: InputDecoration(
+                    hintText: 'Select category',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
+              if (_showCustomCategoryField)
+                TextFormField(
+                  controller: _customCategoryController,
+                  autofocus: true,
+                  validator: (value) {
+                    if (!_showCustomCategoryField) return null;
+                    return (value == null || value.trim().isEmpty)
+                        ? 'Enter a category name'
+                        : null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Enter new category name',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _showCustomCategoryField = !_showCustomCategoryField;
+                    if (_showCustomCategoryField) {
+                      _selectedCategory = null;
+                    } else {
+                      _customCategoryController.clear();
+                    }
+                  });
+                },
+                icon: Icon(
+                  _showCustomCategoryField ? Icons.list : Icons.add,
+                  size: 18,
+                ),
+                label: Text(
+                  _showCustomCategoryField
+                      ? 'Choose from existing categories'
+                      : 'Add a new category',
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               const Text('Price (PKR)',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
@@ -316,7 +424,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: _saveProduct,
+                  onPressed: _isSavingImage ? null : _saveProduct,
                   child:
                       const Text('Save Product', style: TextStyle(fontSize: 16)),
                 ),
