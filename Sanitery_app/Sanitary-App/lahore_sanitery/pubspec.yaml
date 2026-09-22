@@ -18,9 +18,15 @@ dependencies:
   image_picker: ^1.1.2
   uuid: ^4.4.0
 
+  # Added: explicit dependency for copying picked photos to permanent
+  # storage (was previously only available transitively via
+  # image_picker — now used directly in add_edit_product_screen.dart
+  # to fix photos being lost when Android clears the app cache).
+  path_provider: ^2.1.1
+
   # Phase 4 — voice search
   speech_to_text: ^7.0.0
-  permission_handler: ^12.0.3
+  permission_handler: ^11.3.1
 
   # Phase 5 — fuzzy matching for search (voice + typed)
   string_similarity: ^2.0.0
@@ -30,19 +36,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/categories/
-    # add assets/products/ here too only if you end up bundling any
-    # static product images — otherwise leave it out since real
-    # product photos are picked at runtime, not bundled.
-
-# ---
-# NOTE: package versions above are reasonable current picks but always
-# run `flutter pub outdated` before you install, in case newer stable
-# versions exist by the time you start each phase — don't blindly trust
-# a version pinned months earlier in a doc like this.
