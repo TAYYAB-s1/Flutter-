@@ -216,17 +216,24 @@ class ProductDetailScreen extends StatelessWidget {
                     Divider(color: Colors.grey.shade300),
                     const SizedBox(height: 12),
 
-                    // Last updated
+                    // Last updated — FIX: wrapped icon + text in a
+                    // Row with the text inside Flexible/ellipsis, so
+                    // long dates on narrow screens truncate safely
+                    // instead of overflowing past the card edge
+                    // (was overflowing by 1.3px on the real device).
                     Row(
                       children: [
                         Icon(Icons.access_time,
                             size: 18, color: Colors.grey.shade600),
                         const SizedBox(width: 8),
-                        Text(
-                          'Last updated: ${_formatDate(product.lastUpdated)}',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 14,
+                        Flexible(
+                          child: Text(
+                            'Last updated: ${_formatDate(product.lastUpdated)}',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ],
