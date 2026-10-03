@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
-import '../models/price_history_entry.dart';
+import '../../../../../../models/price_history_entry.dart';
 
 class PriceHistoryRepository {
   static const String boxName = 'price_history';

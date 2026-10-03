@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart';
-import '../models/price_history_entry.dart';
-import '../services/price_history_repository.dart';
+import '../../../../../../models/product.dart';
+import '../../../../../../models/price_history_entry.dart';
+import '../../../../../../services/price_history_repository.dart';
 
 class PriceHistoryScreen extends StatelessWidget {
   final Product product;
