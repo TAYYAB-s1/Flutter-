@@ -4,6 +4,7 @@ import '../services/product_repository.dart';
 import '../models/product.dart';
 import '../widgets/theme_toggle_button.dart';
 import 'add_edit_product_screen.dart';
+import 'failed_searches_screen.dart';
 
 class ManageScreen extends StatefulWidget {
   const ManageScreen({super.key});
@@ -85,8 +86,20 @@ class _ManageScreenState extends State<ManageScreen> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'clear_all') _confirmClearAll();
+              if (value == 'search_issues') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const FailedSearchesScreen(),
+                  ),
+                );
+              }
             },
             itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'search_issues',
+                child: Text('View Search Issues'),
+              ),
               PopupMenuItem(
                 value: 'clear_all',
                 child: Text('Clear All Products'),
