@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/product_repository.dart';
 import '../services/voice_search_service.dart';
+import '../services/failed_search_repository.dart';
 import '../widgets/mic_button.dart';
 import '../widgets/category_tile.dart';
 import '../widgets/voice_search_sheet.dart';
@@ -18,8 +19,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // Reused for both voice and typed search, so matching behaves
-  // identically regardless of input method.
   final VoiceSearchService _searchMatcher = VoiceSearchService();
 
   @override
@@ -28,11 +27,21 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _goToResults(String query) {
+  Future<void> _goToResults(String query) async {
     if (query.trim().isEmpty) return;
 
     final allProducts = ProductRepository().getAll();
     final matches = _searchMatcher.matchProducts(query, allProducts);
+
+    // Quietly log searches that found nothing — this builds a list
+    // over time of real phrases the client says that aren't matching
+    // any product, so aliases can be added for the ones that keep
+    // recurring. Doesn't affect what the user sees at all.
+    if (matches.isEmpty) {
+      await FailedSearchRepository().logFailedSearch(query);
+    }
+
+    if (!mounted) return;
 
     Navigator.push(
       context,
@@ -53,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (recognizedText == null || recognizedText.trim().isEmpty) return;
     if (!mounted) return;
 
-    _goToResults(recognizedText);
+    await _goToResults(recognizedText);
   }
 
   void _openCategory(String category) {
