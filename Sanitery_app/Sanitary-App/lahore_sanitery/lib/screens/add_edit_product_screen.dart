@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import '../models/product.dart';
 import '../services/product_repository.dart';
+import '../services/price_history_repository.dart';
 
 class AddEditProductScreen extends StatefulWidget {
   final Product? existingProduct;
@@ -58,9 +59,6 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     super.dispose();
   }
 
-  /// Union of the default 6 categories and any custom categories the
-  /// client has already created on other products, so the dropdown
-  /// always shows everything currently in use plus the standard set.
   List<String> _buildCategoryOptions() {
     final existing = ProductRepository().getAllCategories();
     final combined = <String>{..._defaultCategories, ...existing};
@@ -110,12 +108,6 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     await _pickImage(source);
   }
 
-  /// FIX: image_picker returns a path inside the app's CACHE
-  /// directory, which Android is free to wipe at any time to free up
-  /// space (this is exactly what happened to the client's photos).
-  /// This copies the picked file into the app's permanent DOCUMENTS
-  /// directory, which Android does not clear automatically, and
-  /// gives it a unique name so multiple products never collide.
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     try {
@@ -168,22 +160,45 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     }
 
     final finalImagePath = _pickedImagePath ?? _existingImagePath ?? '';
+    final newPrice = double.parse(_priceController.text.trim());
 
     final repository = ProductRepository();
+    final historyRepository = PriceHistoryRepository();
+
     final product = Product(
       id: widget.existingProduct?.id ?? const Uuid().v4(),
       name: _nameController.text.trim(),
       category: finalCategory,
-      price: double.parse(_priceController.text.trim()),
+      price: newPrice,
       imagePath: finalImagePath,
       aliases: widget.existingProduct?.aliases ?? [],
       lastUpdated: DateTime.now(),
     );
 
     if (_isEditing) {
+      final oldPrice = widget.existingProduct!.price;
       await repository.updateProduct(product);
+      // Only log a history entry if the price actually changed —
+      // editing the name/category/photo alone shouldn't create a
+      // price-change entry.
+      if (oldPrice != newPrice) {
+        await historyRepository.logChange(
+          productId: product.id,
+          oldPrice: oldPrice,
+          newPrice: newPrice,
+        );
+      }
     } else {
       await repository.addProduct(product);
+      // Log the starting price as the first history entry, so the
+      // timeline always begins with "Added at Rs. X" rather than
+      // starting blank until the first edit.
+      await historyRepository.logChange(
+        productId: product.id,
+        oldPrice: newPrice,
+        newPrice: newPrice,
+        isInitial: true,
+      );
     }
 
     if (mounted) Navigator.pop(context, true);
@@ -210,7 +225,11 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     );
 
     if (confirmed == true) {
-      await ProductRepository().deleteProduct(widget.existingProduct!.id);
+      final productId = widget.existingProduct!.id;
+      await ProductRepository().deleteProduct(productId);
+      // Clean up its price history too, so deleted products don't
+      // leave orphaned history entries behind forever.
+      await PriceHistoryRepository().deleteHistoryForProduct(productId);
       if (mounted) Navigator.pop(context, true);
     }
   }
