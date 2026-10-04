@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../utils/category_style.dart';
+import 'price_history_screen.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
@@ -216,11 +217,7 @@ class ProductDetailScreen extends StatelessWidget {
                     Divider(color: Colors.grey.shade300),
                     const SizedBox(height: 12),
 
-                    // Last updated — FIX: wrapped icon + text in a
-                    // Row with the text inside Flexible/ellipsis, so
-                    // long dates on narrow screens truncate safely
-                    // instead of overflowing past the card edge
-                    // (was overflowing by 1.3px on the real device).
+                    // Last updated
                     Row(
                       children: [
                         Icon(Icons.access_time,
@@ -239,6 +236,31 @@ class ProductDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // View Price History button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            PriceHistoryScreen(product: product),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.history),
+                  label: const Text('View Price History'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
               ),
             ],
