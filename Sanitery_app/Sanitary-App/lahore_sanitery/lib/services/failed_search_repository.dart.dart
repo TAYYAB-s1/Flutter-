@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
-import '../../../../../../models/failed_search_entry.dart';
+import '../models/failed_search_entry.dart';
 
 class FailedSearchRepository {
   static const String boxName = 'failed_searches';
