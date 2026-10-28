@@ -26,17 +26,17 @@ dependencies:
 
   # Phase 4 — voice search
   speech_to_text: ^7.0.0
-  permission_handler: ^11.3.1
+  permission_handler: ^13.0.2
 
   # Phase 5 — fuzzy matching for search (voice + typed)
   string_similarity: ^2.0.0
 
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
