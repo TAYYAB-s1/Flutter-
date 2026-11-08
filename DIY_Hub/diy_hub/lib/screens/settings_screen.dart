@@ -58,7 +58,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 12),
-              Text('CHOOSE THEME', style: Theme.of(sheetContext).textTheme.titleLarge),
+              Text('CHOOSE THEME',
+                  style: Theme.of(sheetContext).textTheme.titleLarge),
               const SizedBox(height: 4),
               ...ThemeMode.values.map(
                 (mode) => RadioListTile<ThemeMode>(
@@ -94,7 +95,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 12),
-              Text('CHANGE HERO TIER', style: Theme.of(sheetContext).textTheme.titleLarge),
+              Text('CHANGE HERO TIER',
+                  style: Theme.of(sheetContext).textTheme.titleLarge),
               const SizedBox(height: 4),
               ...HeroTier.values.map(
                 (tier) => RadioListTile<HeroTier>(
@@ -140,7 +142,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Reset', style: TextStyle(color: AppColors.error)),
+            child:
+                const Text('Reset', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -183,9 +186,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: 'App Version',
           value: 'v1.0.0',
         ),
-        _SettingsTile(icon: Icons.star_border, title: 'Rate the App', onTap: _showComingSoon),
-        _SettingsTile(icon: Icons.help_outline, title: 'Help & Support', onTap: _showComingSoon),
-        _SettingsTile(icon: Icons.privacy_tip_outlined, title: 'Privacy Policy', onTap: _showComingSoon),
+        _SettingsTile(
+            icon: Icons.star_border,
+            title: 'Rate the App',
+            onTap: _showComingSoon),
+        _SettingsTile(
+            icon: Icons.help_outline,
+            title: 'Help & Support',
+            onTap: _showComingSoon),
+        _SettingsTile(
+            icon: Icons.privacy_tip_outlined,
+            title: 'Privacy Policy',
+            onTap: _showComingSoon),
         const SizedBox(height: 20),
         const _SectionHeader(title: 'Data'),
         _SettingsTile(
@@ -268,10 +280,12 @@ class _SettingsTile extends StatelessWidget {
               if (value != null)
                 Padding(
                   padding: const EdgeInsets.only(right: 6),
-                  child: Text(value!, style: Theme.of(context).textTheme.bodySmall),
+                  child: Text(value!,
+                      style: Theme.of(context).textTheme.bodySmall),
                 ),
               if (onTap != null)
-                Icon(Icons.chevron_right, size: 20, color: outline.withOpacity(0.6)),
+                Icon(Icons.chevron_right,
+                    size: 20, color: outline.withValues(alpha: 0.6)),
             ],
           ),
         ),

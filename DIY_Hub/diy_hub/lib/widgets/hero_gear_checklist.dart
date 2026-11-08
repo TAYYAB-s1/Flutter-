@@ -40,28 +40,36 @@ class HeroGearChecklist extends StatelessWidget {
                   children: [
                     Icon(Icons.inventory_2, size: 18, color: accentColor),
                     const SizedBox(width: 8),
-                    Text('HERO GEAR REQUIRED', style: Theme.of(context).textTheme.titleMedium),
+                    Text('HERO GEAR REQUIRED',
+                        style: Theme.of(context).textTheme.titleMedium),
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: AppColors.success,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '${materials.length}/${materials.length} READY',
-                    style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900),
                   ),
                 ),
               ],
             ),
           ),
-          Divider(height: 1, color: outline.withOpacity(0.2)),
+          Divider(height: 1, color: outline.withValues(alpha: 0.2)),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Column(
-              children: materials.map((item) => _GearRow(label: item, accentColor: accentColor)).toList(),
+              children: materials
+                  .map(
+                      (item) => _GearRow(label: item, accentColor: accentColor))
+                  .toList(),
             ),
           ),
           const SizedBox(height: 8),

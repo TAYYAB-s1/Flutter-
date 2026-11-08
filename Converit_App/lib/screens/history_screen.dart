@@ -12,10 +12,10 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  List<ConversionModel> _allHistory      = [];
+  List<ConversionModel> _allHistory = [];
   List<ConversionModel> _filteredHistory = [];
-  bool                  _isLoading       = true;
-  String                _searchQuery     = '';
+  bool _isLoading = true;
+  String _searchQuery = '';
 
   final TextEditingController _searchCtrl = TextEditingController();
 
@@ -40,15 +40,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final history = await StorageService.instance.loadHistory();
     if (!mounted) return;
     setState(() {
-      _allHistory      = history;
+      _allHistory = history;
       _filteredHistory = history;
-      _isLoading       = false;
+      _isLoading = false;
     });
   }
 
   void _filterHistory(String query) {
     setState(() {
-      _searchQuery     = query;
+      _searchQuery = query;
       _filteredHistory = query.isEmpty
           ? _allHistory
           : _allHistory
@@ -56,12 +56,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   c.outputFileName
                       .toLowerCase()
                       .contains(query.toLowerCase()) ||
-                  c.toolName
-                      .toLowerCase()
-                      .contains(query.toLowerCase()) ||
-                  c.inputFileName
-                      .toLowerCase()
-                      .contains(query.toLowerCase()))
+                  c.toolName.toLowerCase().contains(query.toLowerCase()) ||
+                  c.inputFileName.toLowerCase().contains(query.toLowerCase()))
               .toList();
     });
   }
@@ -78,8 +74,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
         SnackBar(
           content: const Text('Conversion deleted'),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           action: SnackBarAction(
             label: 'Undo',
             onPressed: () async {
@@ -97,8 +93,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Clear All History',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
         content: const Text(
@@ -128,9 +123,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
       await StorageService.instance.clearHistory();
       _searchCtrl.clear();
       setState(() {
-        _allHistory      = [];
+        _allHistory = [];
         _filteredHistory = [];
-        _searchQuery     = '';
+        _searchQuery = '';
       });
     }
   }
@@ -147,14 +142,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
         actions: [
           if (_allHistory.isNotEmpty)
             IconButton(
-              icon    : const Icon(Icons.delete_outline_rounded),
-              tooltip : 'Clear all history',
+              icon: const Icon(Icons.delete_outline_rounded),
+              tooltip: 'Clear all history',
               onPressed: _clearAll,
             ),
           const SizedBox(width: 4),
         ],
       ),
-
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -164,9 +158,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                   child: TextField(
                     controller: _searchCtrl,
-                    onChanged : _filterHistory,
+                    onChanged: _filterHistory,
                     decoration: InputDecoration(
-                      hintText  : 'Search by filename or tool...',
+                      hintText: 'Search by filename or tool...',
                       prefixIcon: const Icon(Icons.search_rounded, size: 20),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
@@ -195,7 +189,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             : '${_filteredHistory.length} result${_filteredHistory.length == 1 ? '' : 's'}',
                         style: TextStyle(
                           fontSize: 12,
-                          color   : isDark
+                          color: isDark
                               ? const Color(0xFF888888)
                               : const Color(0xFFAAAAAA),
                         ),
@@ -210,20 +204,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   child: _filteredHistory.isEmpty
                       ? _EmptyState(
                           isSearch: _searchQuery.isNotEmpty,
-                          isDark  : isDark,
+                          isDark: isDark,
                         )
                       : RefreshIndicator(
                           onRefresh: _loadHistory,
-                          child    : ListView.builder(
-                            padding   : const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                            itemCount : _filteredHistory.length,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                            itemCount: _filteredHistory.length,
                             itemBuilder: (_, i) {
                               final item = _filteredHistory[i];
                               return _HistoryItem(
-                                key       : ValueKey(item.id),
-                                item      : item,
-                                isDark    : isDark,
-                                onDelete  : () => _deleteItem(item),
+                                key: ValueKey(item.id),
+                                item: item,
+                                isDark: isDark,
+                                onDelete: () => _deleteItem(item),
                               );
                             },
                           ),
@@ -248,48 +242,47 @@ class _HistoryItem extends StatelessWidget {
   });
 
   final ConversionModel item;
-  final bool            isDark;
-  final VoidCallback    onDelete;
+  final bool isDark;
+  final VoidCallback onDelete;
 
   String _formatDate(DateTime dt) {
-    final now  = DateTime.now();
+    final now = DateTime.now();
     final diff = now.difference(dt);
-    if (diff.inMinutes < 1)  return 'Just now';
-    if (diff.inHours < 1)    return '${diff.inMinutes}m ago';
-    if (diff.inDays < 1)     return '${diff.inHours}h ago';
-    if (diff.inDays == 1)    return 'Yesterday';
-    if (diff.inDays < 7)     return '${diff.inDays}d ago';
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    if (diff.inDays == 1) return 'Yesterday';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
     return '${dt.day}/${dt.month}/${dt.year}';
   }
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key             : ValueKey(item.id),
-      direction       : DismissDirection.endToStart,
-      onDismissed     : (_) => onDelete(),
+      key: ValueKey(item.id),
+      direction: DismissDirection.endToStart,
+      onDismissed: (_) => onDelete(),
       background: Container(
-        margin       : const EdgeInsets.only(bottom: 10),
-        decoration   : BoxDecoration(
-          color        : Colors.red,
-          borderRadius : BorderRadius.circular(14),
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(14),
         ),
-        alignment  : Alignment.centerRight,
-        padding    : const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.delete_rounded,
-            color: Colors.white, size: 22),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        child: const Icon(Icons.delete_rounded, color: Colors.white, size: 22),
       ),
       child: Container(
-        margin    : const EdgeInsets.only(bottom: 10),
-        padding   : const EdgeInsets.all(14),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color       : isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           boxShadow: isDark
               ? []
               : [
                   BoxShadow(
-                    color     : Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 6,
                   )
                 ],
@@ -298,10 +291,10 @@ class _HistoryItem extends StatelessWidget {
           children: [
             // ── Tool color icon ───────────────────────────────────
             Container(
-              width     : 46,
-              height    : 46,
+              width: 46,
+              height: 46,
               decoration: BoxDecoration(
-                color       : item.toolColor.withOpacity(0.15),
+                color: item.toolColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(Icons.insert_drive_file_rounded,
@@ -319,14 +312,12 @@ class _HistoryItem extends StatelessWidget {
                   Text(
                     item.outputFileName,
                     style: TextStyle(
-                      fontSize  : 13,
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color     : isDark
-                          ? Colors.white
-                          : const Color(0xFF212121),
+                      color: isDark ? Colors.white : const Color(0xFF212121),
                     ),
-                    maxLines : 1,
-                    overflow : TextOverflow.ellipsis,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
 
                   const SizedBox(height: 3),
@@ -336,7 +327,7 @@ class _HistoryItem extends StatelessWidget {
                     '${item.toolName} • ${item.formattedSize}',
                     style: TextStyle(
                       fontSize: 11,
-                      color   : isDark
+                      color: isDark
                           ? const Color(0xFF888888)
                           : const Color(0xFF757575),
                     ),
@@ -357,7 +348,7 @@ class _HistoryItem extends StatelessWidget {
                         _formatDate(item.convertedAt),
                         style: TextStyle(
                           fontSize: 10,
-                          color   : isDark
+                          color: isDark
                               ? const Color(0xFF666666)
                               : const Color(0xFFBBBBBB),
                         ),
@@ -373,7 +364,7 @@ class _HistoryItem extends StatelessWidget {
                         item.formattedDuration,
                         style: TextStyle(
                           fontSize: 10,
-                          color   : isDark
+                          color: isDark
                               ? const Color(0xFF666666)
                               : const Color(0xFFBBBBBB),
                         ),
@@ -390,10 +381,10 @@ class _HistoryItem extends StatelessWidget {
             GestureDetector(
               onTap: onDelete,
               child: Container(
-                width     : 32,
-                height    : 32,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
-                  color       : Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Icons.delete_outline_rounded,
@@ -423,23 +414,17 @@ class _EmptyState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isSearch
-                ? Icons.search_off_rounded
-                : Icons.folder_open_rounded,
-            size : 72,
-            color: isDark
-                ? const Color(0xFF444444)
-                : const Color(0xFFCCCCCC),
+            isSearch ? Icons.search_off_rounded : Icons.folder_open_rounded,
+            size: 72,
+            color: isDark ? const Color(0xFF444444) : const Color(0xFFCCCCCC),
           ),
           const SizedBox(height: 16),
           Text(
             isSearch ? 'No results found' : 'No conversions yet',
             style: TextStyle(
-              fontSize  : 16,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
-              color     : isDark
-                  ? const Color(0xFF888888)
-                  : const Color(0xFFAAAAAA),
+              color: isDark ? const Color(0xFF888888) : const Color(0xFFAAAAAA),
             ),
           ),
           const SizedBox(height: 6),
@@ -449,9 +434,7 @@ class _EmptyState extends StatelessWidget {
                 : 'Your converted files will appear here',
             style: TextStyle(
               fontSize: 13,
-              color   : isDark
-                  ? const Color(0xFF666666)
-                  : const Color(0xFFBBBBBB),
+              color: isDark ? const Color(0xFF666666) : const Color(0xFFBBBBBB),
             ),
           ),
         ],

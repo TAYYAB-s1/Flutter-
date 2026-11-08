@@ -11,10 +11,10 @@ class FileUploadArea extends StatelessWidget {
     this.isMultiFile = false,
   });
 
-  final Color        accentColor;
-  final String       acceptedFiles; // e.g. "pdf" or "jpg,jpeg,png"
+  final Color accentColor;
+  final String acceptedFiles; // e.g. "pdf" or "jpg,jpeg,png"
   final VoidCallback onTap;
-  final bool         isMultiFile;
+  final bool isMultiFile;
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +23,14 @@ class FileUploadArea extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width  : double.infinity,
+        width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
         decoration: BoxDecoration(
-          color        : isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          borderRadius : BorderRadius.circular(16),
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color : accentColor.withOpacity(0.5),
-            width : 2,
+            color: accentColor.withValues(alpha: 0.5),
+            width: 2,
             // Dashed effect via custom painter below
           ),
         ),
@@ -39,16 +39,16 @@ class FileUploadArea extends StatelessWidget {
           children: [
             // Upload icon circle
             Container(
-              width      : 72,
-              height     : 72,
-              decoration : BoxDecoration(
-                color        : accentColor.withOpacity(0.12),
-                borderRadius : BorderRadius.circular(36),
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(36),
               ),
               child: Icon(
                 Icons.cloud_upload_rounded,
-                size  : 36,
-                color : accentColor,
+                size: 36,
+                color: accentColor,
               ),
             ),
 
@@ -57,9 +57,9 @@ class FileUploadArea extends StatelessWidget {
             Text(
               isMultiFile ? 'Tap to select files' : 'Tap to select a file',
               style: TextStyle(
-                fontSize   : 16,
-                fontWeight : FontWeight.w700,
-                color      : isDark ? Colors.white : const Color(0xFF212121),
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : const Color(0xFF212121),
               ),
             ),
 
@@ -68,10 +68,9 @@ class FileUploadArea extends StatelessWidget {
             Text(
               'Accepted: .${acceptedFiles.replaceAll(',', ', .')}',
               style: TextStyle(
-                fontSize : 12,
-                color    : isDark
-                    ? const Color(0xFF888888)
-                    : const Color(0xFFAAAAAA),
+                fontSize: 12,
+                color:
+                    isDark ? const Color(0xFF888888) : const Color(0xFFAAAAAA),
               ),
             ),
 
@@ -79,21 +78,21 @@ class FileUploadArea extends StatelessWidget {
 
             // Browse button
             ElevatedButton.icon(
-              onPressed  : onTap,
-              style      : ElevatedButton.styleFrom(
-                backgroundColor : accentColor,
-                foregroundColor : Colors.white,
-                padding         : const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 12),
+              onPressed: onTap,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: accentColor,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              icon : const Icon(Icons.folder_open_rounded, size: 18),
+              icon: const Icon(Icons.folder_open_rounded, size: 18),
               label: Text(
                 isMultiFile ? 'Browse Files' : 'Browse File',
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -116,32 +115,32 @@ class FileInfoCard extends StatelessWidget {
     required this.onRemove,
   });
 
-  final String       fileName;
-  final String       fileSize;   // pre-formatted e.g. "1.4 MB"
-  final Color        accentColor;
+  final String fileName;
+  final String fileSize; // pre-formatted e.g. "1.4 MB"
+  final Color accentColor;
   final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ext    = fileName.split('.').last.toUpperCase();
+    final ext = fileName.split('.').last.toUpperCase();
 
     return Container(
-      width  : double.infinity,
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color        : isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius : BorderRadius.circular(16),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: accentColor.withOpacity(0.4),
+          color: accentColor.withValues(alpha: 0.4),
           width: 1.5,
         ),
         boxShadow: isDark
             ? []
             : [
                 BoxShadow(
-                  color      : Colors.black.withOpacity(0.05),
-                  blurRadius : 8,
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
                 ),
               ],
       ),
@@ -149,11 +148,11 @@ class FileInfoCard extends StatelessWidget {
         children: [
           // File type badge
           Container(
-            width      : 50,
-            height     : 56,
-            decoration : BoxDecoration(
-              color        : accentColor.withOpacity(0.12),
-              borderRadius : BorderRadius.circular(10),
+            width: 50,
+            height: 56,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -164,9 +163,9 @@ class FileInfoCard extends StatelessWidget {
                 Text(
                   ext,
                   style: TextStyle(
-                    fontSize   : 9,
-                    fontWeight : FontWeight.w800,
-                    color      : accentColor,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    color: accentColor,
                   ),
                 ),
               ],
@@ -183,12 +182,12 @@ class FileInfoCard extends StatelessWidget {
                 Text(
                   fileName,
                   style: TextStyle(
-                    fontSize   : 14,
-                    fontWeight : FontWeight.w600,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : const Color(0xFF212121),
                   ),
-                  maxLines : 2,
-                  overflow : TextOverflow.ellipsis,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Row(
@@ -199,8 +198,8 @@ class FileInfoCard extends StatelessWidget {
                     Text(
                       '$fileSize • Ready to convert',
                       style: TextStyle(
-                        fontSize : 12,
-                        color    : isDark
+                        fontSize: 12,
+                        color: isDark
                             ? const Color(0xFF888888)
                             : const Color(0xFF757575),
                       ),
@@ -215,14 +214,14 @@ class FileInfoCard extends StatelessWidget {
           GestureDetector(
             onTap: onRemove,
             child: Container(
-              width      : 32,
-              height     : 32,
-              decoration : BoxDecoration(
-                color        : Colors.red.withOpacity(0.12),
-                borderRadius : BorderRadius.circular(8),
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.close_rounded,
-                  color: Colors.red, size: 16),
+              child:
+                  const Icon(Icons.close_rounded, color: Colors.red, size: 16),
             ),
           ),
         ],
@@ -245,10 +244,10 @@ class MultiFileItem extends StatelessWidget {
     required this.onRemove,
   });
 
-  final int          index;
-  final String       fileName;
-  final String       fileSize;
-  final Color        accentColor;
+  final int index;
+  final String fileName;
+  final String fileSize;
+  final Color accentColor;
   final VoidCallback onRemove;
 
   @override
@@ -256,34 +255,32 @@ class MultiFileItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin : const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color        : isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius : BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark
-              ? const Color(0xFF2C2C2C)
-              : const Color(0xFFE0E0E0),
+          color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFE0E0E0),
         ),
       ),
       child: Row(
         children: [
           // Number badge
           Container(
-            width      : 28,
-            height     : 28,
-            decoration : BoxDecoration(
-              color        : accentColor.withOpacity(0.15),
-              borderRadius : BorderRadius.circular(8),
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
               child: Text(
                 '${index + 1}',
                 style: TextStyle(
-                  fontSize   : 12,
-                  fontWeight : FontWeight.bold,
-                  color      : accentColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: accentColor,
                 ),
               ),
             ),
@@ -299,18 +296,18 @@ class MultiFileItem extends StatelessWidget {
                 Text(
                   fileName,
                   style: TextStyle(
-                    fontSize   : 13,
-                    fontWeight : FontWeight.w600,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white : const Color(0xFF212121),
                   ),
-                  maxLines : 1,
-                  overflow : TextOverflow.ellipsis,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   fileSize,
                   style: TextStyle(
-                    fontSize : 11,
-                    color    : isDark
+                    fontSize: 11,
+                    color: isDark
                         ? const Color(0xFF888888)
                         : const Color(0xFFAAAAAA),
                   ),
@@ -323,14 +320,14 @@ class MultiFileItem extends StatelessWidget {
           GestureDetector(
             onTap: onRemove,
             child: Container(
-              width      : 28,
-              height     : 28,
-              decoration : BoxDecoration(
-                color        : Colors.red.withOpacity(0.1),
-                borderRadius : BorderRadius.circular(6),
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
               ),
-              child: const Icon(Icons.close_rounded,
-                  color: Colors.red, size: 14),
+              child:
+                  const Icon(Icons.close_rounded, color: Colors.red, size: 14),
             ),
           ),
         ],

@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
     required this.onThemeToggle,
   });
 
-  final bool         isDark;
+  final bool isDark;
   final VoidCallback onThemeToggle;
 
   @override
@@ -41,25 +41,25 @@ class _HomeScreenState extends State<HomeScreen> {
         slivers: [
           // ── AppBar ─────────────────────────────────────────────────────
           SliverAppBar(
-            pinned         : true,
-            expandedHeight : 0,
+            pinned: true,
+            expandedHeight: 0,
             title: Row(
               children: [
                 Container(
-                  width      : 32,
-                  height     : 32,
-                  decoration : BoxDecoration(
-                    gradient     : const LinearGradient(
-                        colors: AppColors.bannerGradient),
-                    borderRadius : BorderRadius.circular(8),
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    gradient:
+                        const LinearGradient(colors: AppColors.bannerGradient),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.swap_horiz_rounded,
                       color: Colors.white, size: 18),
                 ),
                 const SizedBox(width: 10),
                 const Text('ConvertIt',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 20)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
               ],
             ),
             actions: [
@@ -107,23 +107,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: GridView.builder(
-                    physics    : const NeverScrollableScrollPhysics(),
-                    shrinkWrap : true,
-                    itemCount  : 6,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: 6,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount   : 2,
-                      crossAxisSpacing : 12,
-                      mainAxisSpacing  : 12,
-                      childAspectRatio : 0.88,
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.88,
                     ),
                     itemBuilder: (_, i) => ToolCard(
-                      tool  : kAllTools[i],
-                      onTap : () => Navigator.push(
+                      tool: kAllTools[i],
+                      onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              ToolDetailScreen(tool: kAllTools[i]),
+                          builder: (_) => ToolDetailScreen(tool: kAllTools[i]),
                         ),
                       ),
                     ),
@@ -136,16 +135,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text('Recently Converted',
-                      style: TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 12),
 
                 _recentConversions.isEmpty
                     ? _EmptyRecent(isDark: isDark)
                     : _RecentList(
-                        conversions : _recentConversions.take(3).toList(),
-                        isDark      : isDark,
+                        conversions: _recentConversions.take(3).toList(),
+                        isDark: isDark,
                       ),
 
                 const SizedBox(height: 32),
@@ -167,14 +166,14 @@ class _HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width  : double.infinity,
-      margin : const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: AppColors.bannerGradient,
-          begin : Alignment.topLeft,
-          end   : Alignment.bottomRight,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -195,16 +194,16 @@ class _HeroBanner extends StatelessWidget {
                   height: 1.2)),
           const SizedBox(height: 8),
           const Text('PDF, Word, Images and more —\npowered by CloudConvert.',
-              style: TextStyle(
-                  color: Colors.white70, fontSize: 13, height: 1.5)),
+              style:
+                  TextStyle(color: Colors.white70, fontSize: 13, height: 1.5)),
           const SizedBox(height: 20),
           Row(
             children: [
               _StatChip(icon: Icons.swap_horiz_rounded, label: '12 Tools'),
               const SizedBox(width: 10),
-              _StatChip(icon: Icons.bolt_rounded,       label: 'Fast & Free'),
+              _StatChip(icon: Icons.bolt_rounded, label: 'Fast & Free'),
               const SizedBox(width: 10),
-              _StatChip(icon: Icons.lock_rounded,       label: 'Secure'),
+              _StatChip(icon: Icons.lock_rounded, label: 'Secure'),
             ],
           ),
         ],
@@ -216,15 +215,15 @@ class _HeroBanner extends StatelessWidget {
 class _StatChip extends StatelessWidget {
   const _StatChip({required this.icon, required this.label});
   final IconData icon;
-  final String   label;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color        : Colors.white.withOpacity(0.18),
-        borderRadius : BorderRadius.circular(20),
+        color: Colors.white.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -251,26 +250,24 @@ class _EmptyRecent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin : const EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 36),
       decoration: BoxDecoration(
-        color        : isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius : BorderRadius.circular(16),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: isDark
             ? []
             : [
                 BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8)
+                    color: Colors.black.withValues(alpha: 0.05), blurRadius: 8)
               ],
       ),
       child: Column(
         children: [
           Icon(Icons.folder_open_rounded,
               size: 52,
-              color: isDark
-                  ? const Color(0xFF444444)
-                  : const Color(0xFFCCCCCC)),
+              color:
+                  isDark ? const Color(0xFF444444) : const Color(0xFFCCCCCC)),
           const SizedBox(height: 12),
           Text('No recent files yet',
               style: TextStyle(
@@ -297,7 +294,7 @@ class _EmptyRecent extends StatelessWidget {
 class _RecentList extends StatelessWidget {
   const _RecentList({required this.conversions, required this.isDark});
   final List<ConversionModel> conversions;
-  final bool                  isDark;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +312,7 @@ class _RecentList extends StatelessWidget {
 class _RecentItem extends StatelessWidget {
   const _RecentItem({required this.conversion, required this.isDark});
   final ConversionModel conversion;
-  final bool            isDark;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -323,17 +320,17 @@ class _RecentItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color        : isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius : BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           Container(
-            width      : 40,
-            height     : 40,
-            decoration : BoxDecoration(
-              color        : conversion.toolColor.withOpacity(0.15),
-              borderRadius : BorderRadius.circular(10),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: conversion.toolColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(Icons.insert_drive_file_rounded,
                 color: conversion.toolColor, size: 20),
@@ -346,11 +343,10 @@ class _RecentItem extends StatelessWidget {
                 Text(conversion.outputFileName,
                     style: const TextStyle(
                         fontSize: 13, fontWeight: FontWeight.w600),
-                    maxLines : 1,
-                    overflow : TextOverflow.ellipsis),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
-                Text(
-                    '${conversion.toolName} • ${conversion.formattedSize}',
+                Text('${conversion.toolName} • ${conversion.formattedSize}',
                     style: TextStyle(
                         fontSize: 11,
                         color: isDark
@@ -361,9 +357,8 @@ class _RecentItem extends StatelessWidget {
           ),
           Icon(Icons.download_rounded,
               size: 20,
-              color: isDark
-                  ? const Color(0xFF666666)
-                  : const Color(0xFFBBBBBB)),
+              color:
+                  isDark ? const Color(0xFF666666) : const Color(0xFFBBBBBB)),
         ],
       ),
     );

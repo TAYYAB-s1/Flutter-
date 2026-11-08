@@ -53,9 +53,9 @@ class MissionCard extends StatelessWidget {
               height: 130,
               width: double.infinity,
               child: HalftoneBackground(
-                dotColor: Colors.black.withOpacity(0.08),
+                dotColor: Colors.black.withValues(alpha: 0.08),
                 child: Container(
-                  color: skill.accentColor.withOpacity(0.35),
+                  color: skill.accentColor.withValues(alpha: 0.35),
                   child: Stack(
                     children: [
                       Center(
@@ -64,7 +64,8 @@ class MissionCard extends StatelessWidget {
                       Positioned(
                         top: 8,
                         left: 8,
-                        child: _RankPill(rank: skill.difficultyRank, color: _rankColor()),
+                        child: _RankPill(
+                            rank: skill.difficultyRank, color: _rankColor()),
                       ),
                       if (burstLabel != null)
                         Positioned(
@@ -109,7 +110,9 @@ class MissionCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.schedule, size: 14, color: Theme.of(context).textTheme.bodySmall?.color),
+                      Icon(Icons.schedule,
+                          size: 14,
+                          color: Theme.of(context).textTheme.bodySmall?.color),
                       const SizedBox(width: 4),
                       Text(
                         '${skill.estimatedMinutes} mins • ${skill.stepCount} steps',
@@ -123,18 +126,22 @@ class MissionCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.bolt, size: 16, color: AppColors.comicYellow),
+                          const Icon(Icons.bolt,
+                              size: 16, color: AppColors.comicYellow),
                           const SizedBox(width: 2),
-                          Text('+${skill.xpReward} XP', style: Theme.of(context).textTheme.bodySmall),
+                          Text('+${skill.xpReward} XP',
+                              style: Theme.of(context).textTheme.bodySmall),
                         ],
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: skill.accentColor,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 8),
                         ),
                         onPressed: onTap,
-                        child: const Text('START CRAFT →', style: TextStyle(fontSize: 12)),
+                        child: const Text('START CRAFT →',
+                            style: TextStyle(fontSize: 12)),
                       ),
                     ],
                   ),
@@ -165,7 +172,8 @@ class _RankPill extends StatelessWidget {
       ),
       child: Text(
         '${'★' * rank.starCount} ${rank.label.toUpperCase()}',
-        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
+        style: const TextStyle(
+            color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
       ),
     );
   }

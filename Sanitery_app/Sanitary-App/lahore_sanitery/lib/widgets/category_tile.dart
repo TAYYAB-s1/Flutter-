@@ -21,7 +21,7 @@ class CategoryTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -40,14 +40,14 @@ class CategoryTile extends StatelessWidget {
                       errorBuilder: (_, __, ___) => Container(
                         height: 64,
                         width: 64,
-                        color: style.color.withOpacity(0.15),
+                        color: style.color.withValues(alpha: 0.15),
                         child: Icon(Icons.category, color: style.color),
                       ),
                     )
                   : Container(
                       height: 64,
                       width: 64,
-                      color: style.color.withOpacity(0.15),
+                      color: style.color.withValues(alpha: 0.15),
                       child: Icon(Icons.category, color: style.color),
                     ),
             ),

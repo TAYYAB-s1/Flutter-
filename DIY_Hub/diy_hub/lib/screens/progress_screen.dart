@@ -95,24 +95,34 @@ class _ProgressScreenState extends State<ProgressScreen> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.emoji_events, color: Colors.white, size: 28),
+                    const Icon(Icons.emoji_events,
+                        color: Colors.white, size: 28),
                     const SizedBox(width: 10),
                     Text(
                       'RANK: ${stats.currentRank.label.toUpperCase()}',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '⚡ ${stats.totalXp} Total XP  •  ${stats.heroTier.title}',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 14),
                 if (stats.xpToNextRank != null) ...[
                   Text(
                     '${stats.xpToNextRank} XP TO NEXT RANK',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12),
                   ),
                   const SizedBox(height: 6),
                   PowerMeterBar(
@@ -123,7 +133,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ] else
                   const Text(
                     '🏆 Maximum Rank Achieved!',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w900),
                   ),
               ],
             ),
@@ -135,7 +146,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
           Text('IN PROGRESS', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           if (inProgress.isEmpty)
-            _EmptyRow(text: 'No missions in progress. Start one from the Categories tab!')
+            _EmptyRow(
+                text:
+                    'No missions in progress. Start one from the Categories tab!')
           else
             ...inProgress.map((skill) {
               final progress = _allProgress[skill.id]!;
@@ -157,10 +170,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       children: [
                         Row(
                           children: [
-                            Icon(skill.icon, color: skill.accentColor, size: 20),
+                            Icon(skill.icon,
+                                color: skill.accentColor, size: 20),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: Text(skill.title, style: Theme.of(context).textTheme.titleMedium),
+                              child: Text(skill.title,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium),
                             ),
                           ],
                         ),
@@ -182,8 +198,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('TROPHY CASE', style: Theme.of(context).textTheme.titleLarge),
-              Text('${completed.length} earned', style: Theme.of(context).textTheme.bodySmall),
+              Text('TROPHY CASE',
+                  style: Theme.of(context).textTheme.titleLarge),
+              Text('${completed.length} earned',
+                  style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
           const SizedBox(height: 12),
@@ -202,7 +220,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   onTap: () => widget.onOpenSkill?.call(skill),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: skill.accentColor.withOpacity(isDark ? 0.3 : 0.2),
+                      color: skill.accentColor
+                          .withValues(alpha: isDark ? 0.3 : 0.2),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: outline, width: 2),
                     ),
@@ -213,14 +232,18 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         Stack(
                           alignment: Alignment.center,
                           children: [
-                            Icon(skill.icon, size: 32, color: skill.accentColor),
+                            Icon(skill.icon,
+                                size: 32, color: skill.accentColor),
                             Positioned(
                               bottom: -2,
                               right: -2,
                               child: Container(
                                 padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(color: AppColors.success, shape: BoxShape.circle),
-                                child: const Icon(Icons.check, size: 10, color: Colors.white),
+                                decoration: const BoxDecoration(
+                                    color: AppColors.success,
+                                    shape: BoxShape.circle),
+                                child: const Icon(Icons.check,
+                                    size: 10, color: Colors.white),
                               ),
                             ),
                           ],
@@ -231,7 +254,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           textAlign: TextAlign.center,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                       ],
                     ),

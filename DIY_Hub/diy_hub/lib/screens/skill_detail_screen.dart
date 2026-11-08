@@ -58,7 +58,8 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
 
     if (completedIds.contains(lesson.id)) return EpisodeState.completed;
 
-    final firstIncompleteIndex = lessons.indexWhere((l) => !completedIds.contains(l.id));
+    final firstIncompleteIndex =
+        lessons.indexWhere((l) => !completedIds.contains(l.id));
     if (index == firstIncompleteIndex) return EpisodeState.current;
     return EpisodeState.locked;
   }
@@ -66,7 +67,8 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   void _openLesson(LessonModel lesson) {
     // TODO(Phase 3C): replace with Navigator.push to LessonScreen.
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${lesson.title} — Lesson screen coming in Phase 3C')),
+      SnackBar(
+          content: Text('${lesson.title} — Lesson screen coming in Phase 3C')),
     );
   }
 
@@ -74,7 +76,8 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   Widget build(BuildContext context) {
     final skill = widget.skill;
     final isFavorite = _progress?.isFavorite ?? false;
-    final missionNumber = SkillsData.all.indexWhere((s) => s.id == skill.id) + 1;
+    final missionNumber =
+        SkillsData.all.indexWhere((s) => s.id == skill.id) + 1;
     final firstLesson = skill.lessons.isNotEmpty ? skill.lessons.first : null;
 
     return Scaffold(
@@ -108,19 +111,25 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                   style: Theme.of(context).textTheme.displayMedium,
                 ),
                 const SizedBox(height: 8),
-                Text(skill.description, style: Theme.of(context).textTheme.bodyLarge),
+                Text(skill.description,
+                    style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _InfoChip(icon: Icons.groups, label: skill.minHeroTier.title),
-                    _InfoChip(icon: Icons.schedule, label: '${skill.estimatedMinutes} mins'),
+                    _InfoChip(
+                        icon: Icons.groups, label: skill.minHeroTier.title),
+                    _InfoChip(
+                        icon: Icons.schedule,
+                        label: '${skill.estimatedMinutes} mins'),
                     _InfoChip(icon: Icons.bolt, label: '+${skill.xpReward} XP'),
                   ],
                 ),
                 const SizedBox(height: 20),
-                HeroGearChecklist(materials: skill.materialsList, accentColor: skill.accentColor),
+                HeroGearChecklist(
+                    materials: skill.materialsList,
+                    accentColor: skill.accentColor),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
@@ -129,7 +138,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                       backgroundColor: skill.accentColor,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    onPressed: firstLesson == null ? null : () => _openLesson(firstLesson),
+                    onPressed: firstLesson == null
+                        ? null
+                        : () => _openLesson(firstLesson),
                     child: const Text('⚡ START MISSION!'),
                   ),
                 ),
@@ -137,17 +148,23 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('MISSION EPISODES', style: Theme.of(context).textTheme.titleLarge),
+                    Text('MISSION EPISODES',
+                        style: Theme.of(context).textTheme.titleLarge),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: skill.accentColor, width: 1.5),
+                        border:
+                            Border.all(color: skill.accentColor, width: 1.5),
                       ),
                       child: Text(
                         '${skill.lessons.length} CHAPTERS',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w800),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -186,24 +203,29 @@ class _HeroBanner extends StatelessWidget {
         height: 160,
         width: double.infinity,
         child: HalftoneBackground(
-          dotColor: Colors.black.withOpacity(0.08),
+          dotColor: Colors.black.withValues(alpha: 0.08),
           child: Container(
-            color: skill.accentColor.withOpacity(0.45),
+            color: skill.accentColor.withValues(alpha: 0.45),
             child: Stack(
               children: [
-                Center(child: Icon(skill.icon, size: 72, color: Colors.black87)),
+                Center(
+                    child: Icon(skill.icon, size: 72, color: Colors.black87)),
                 Positioned(
                   top: 10,
                   left: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black87,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       '⚡ LAB DISCOVERY #$missionNumber',
-                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
@@ -225,10 +247,12 @@ class _Tag extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(
+          color: Colors.black87, borderRadius: BorderRadius.circular(6)),
       child: Text(
         label,
-        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
+        style: const TextStyle(
+            color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
       ),
     );
   }
@@ -261,7 +285,8 @@ class _RankBadge extends StatelessWidget {
       ),
       child: Text(
         '${'★' * rank.starCount} RANK: ${rank.label.toUpperCase()}',
-        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
+        style: const TextStyle(
+            color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
       ),
     );
   }
@@ -291,7 +316,11 @@ class _InfoChip extends StatelessWidget {
         children: [
           Icon(icon, size: 14),
           const SizedBox(width: 6),
-          Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700)),
+          Text(label,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -318,7 +347,7 @@ class _MentorTip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.comicYellow.withOpacity(0.22),
+        color: AppColors.comicYellow.withValues(alpha: 0.22),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.comicYellow, width: 2),
       ),
@@ -333,7 +362,10 @@ class _MentorTip extends StatelessWidget {
               children: [
                 Text(
                   'LAB ROBOT MENTOR TIP',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w900),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 4),
                 Text('"$tip"', style: Theme.of(context).textTheme.bodyMedium),

@@ -17,7 +17,8 @@ void main() async {
 
   runApp(ConvertItApp(
     initialThemeMode: savedTheme == 'light' ? ThemeMode.light : ThemeMode.dark,
-    initialSeedColor: savedColor != null ? Color(savedColor) : AppColors.primary,
+    initialSeedColor:
+        savedColor != null ? Color(savedColor) : AppColors.primary,
   ));
 }
 
@@ -33,7 +34,7 @@ class ConvertItApp extends StatefulWidget {
   });
 
   final ThemeMode initialThemeMode;
-  final Color     initialSeedColor;
+  final Color initialSeedColor;
 
   @override
   State<ConvertItApp> createState() => _ConvertItAppState();
@@ -41,7 +42,7 @@ class ConvertItApp extends StatefulWidget {
 
 class _ConvertItAppState extends State<ConvertItApp> {
   late ThemeMode _themeMode;
-  late Color     _seedColor;
+  late Color _seedColor;
 
   @override
   void initState() {
@@ -52,35 +53,34 @@ class _ConvertItAppState extends State<ConvertItApp> {
 
   void _setThemeMode(ThemeMode mode) {
     setState(() => _themeMode = mode);
-    StorageService.instance.saveThemeMode(
-        mode == ThemeMode.dark ? 'dark' : 'light');
+    StorageService.instance
+        .saveThemeMode(mode == ThemeMode.dark ? 'dark' : 'light');
   }
 
   void _setSeedColor(Color color) {
     setState(() => _seedColor = color);
-    StorageService.instance.saveSeedColor(color.value);
+    StorageService.instance.saveSeedColor(color.toARGB32());
   }
 
   bool get _isDark =>
       _themeMode == ThemeMode.dark ||
       (_themeMode == ThemeMode.system &&
-          WidgetsBinding
-              .instance.platformDispatcher.platformBrightness ==
+          WidgetsBinding.instance.platformDispatcher.platformBrightness ==
               Brightness.dark);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title                   : 'ConvertIt',
+      title: 'ConvertIt',
       debugShowCheckedModeBanner: false,
-      themeMode               : _themeMode,
-      theme                   : AppTheme.light(seedColor: _seedColor),
-      darkTheme               : AppTheme.dark(seedColor: _seedColor),
+      themeMode: _themeMode,
+      theme: AppTheme.light(seedColor: _seedColor),
+      darkTheme: AppTheme.dark(seedColor: _seedColor),
       home: _MainShell(
-        isDark          : _isDark,
-        seedColor       : _seedColor,
-        onThemeToggle   : () => _setThemeMode(
-            _isDark ? ThemeMode.light : ThemeMode.dark),
+        isDark: _isDark,
+        seedColor: _seedColor,
+        onThemeToggle: () =>
+            _setThemeMode(_isDark ? ThemeMode.light : ThemeMode.dark),
         onSeedColorChange: _setSeedColor,
       ),
     );
@@ -99,9 +99,9 @@ class _MainShell extends StatefulWidget {
     required this.onSeedColorChange,
   });
 
-  final bool                isDark;
-  final Color               seedColor;
-  final VoidCallback        onThemeToggle;
+  final bool isDark;
+  final Color seedColor;
+  final VoidCallback onThemeToggle;
   final ValueChanged<Color> onSeedColorChange;
 
   @override
@@ -116,41 +116,41 @@ class _MainShellState extends State<_MainShell> {
     // Built inside build() so screens always receive fresh props
     final screens = [
       HomeScreen(
-        isDark       : widget.isDark,
+        isDark: widget.isDark,
         onThemeToggle: widget.onThemeToggle,
       ),
       const HistoryScreen(),
       SettingsScreen(
-        isDark           : widget.isDark,
-        seedColor        : widget.seedColor,
-        onThemeToggle    : widget.onThemeToggle,
+        isDark: widget.isDark,
+        seedColor: widget.seedColor,
+        onThemeToggle: widget.onThemeToggle,
         onSeedColorChange: widget.onSeedColorChange,
       ),
     ];
 
     return Scaffold(
       body: IndexedStack(
-        index   : _currentIndex,
+        index: _currentIndex,
         children: screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap       : (i) => setState(() => _currentIndex = i),
+        onTap: (i) => setState(() => _currentIndex = i),
         items: const [
           BottomNavigationBarItem(
-            icon      : Icon(Icons.home_outlined),
+            icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home_rounded),
-            label     : 'Home',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon      : Icon(Icons.history_outlined),
+            icon: Icon(Icons.history_outlined),
             activeIcon: Icon(Icons.history_rounded),
-            label     : 'History',
+            label: 'History',
           ),
           BottomNavigationBarItem(
-            icon      : Icon(Icons.settings_outlined),
+            icon: Icon(Icons.settings_outlined),
             activeIcon: Icon(Icons.settings_rounded),
-            label     : 'Settings',
+            label: 'Settings',
           ),
         ],
       ),

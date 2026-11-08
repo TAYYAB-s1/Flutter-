@@ -9,8 +9,18 @@ class PriceHistoryScreen extends StatelessWidget {
   const PriceHistoryScreen({super.key, required this.product});
 
   static const List<String> _monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   String _formatDate(DateTime date) {
@@ -59,7 +69,7 @@ class PriceHistoryScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -70,7 +80,7 @@ class PriceHistoryScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: Colors.blue.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.add, color: Colors.blue, size: 18),
@@ -111,7 +121,7 @@ class PriceHistoryScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -122,7 +132,7 @@ class PriceHistoryScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: changeColor.withOpacity(0.1),
+              color: changeColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(changeIcon, color: changeColor, size: 18),
@@ -142,7 +152,8 @@ class PriceHistoryScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(Icons.arrow_forward, size: 14, color: Colors.grey),
+                    const Icon(Icons.arrow_forward,
+                        size: 14, color: Colors.grey),
                     const SizedBox(width: 6),
                     Text(
                       'Rs. ${entry.newPrice.toStringAsFixed(0)}',

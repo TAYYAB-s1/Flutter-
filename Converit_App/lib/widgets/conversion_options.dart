@@ -14,7 +14,7 @@ class ConversionOptions extends StatefulWidget {
     required this.onOptionsChanged,
   });
 
-  final ToolModel                    tool;
+  final ToolModel tool;
   final ValueChanged<Map<String, dynamic>> onOptionsChanged;
 
   @override
@@ -23,33 +23,33 @@ class ConversionOptions extends StatefulWidget {
 
 class _ConversionOptionsState extends State<ConversionOptions> {
   // Shared options
-  bool _ocrEnabled       = true;
-  bool _preserveFormat   = true;
-  bool _autoDelete       = true;
-  bool _removeMetadata   = false;
-  bool _transparentBg    = false;
-  bool _fitToPage        = true;
+  bool _ocrEnabled = true;
+  bool _preserveFormat = true;
+  bool _autoDelete = true;
+  bool _removeMetadata = false;
+  bool _transparentBg = false;
+  bool _fitToPage = true;
 
   // PDF to Image
-  String _imageFormat    = 'JPG';
-  String _imageQuality   = 'High';
-  String _pageRange      = 'All Pages';
+  String _imageFormat = 'JPG';
+  String _imageQuality = 'High';
+  String _pageRange = 'All Pages';
   final TextEditingController _customRangeCtrl = TextEditingController();
 
   // Compress PDF
   double _compressionLevel = 1; // 0=Low 1=Medium 2=High
 
   // Split PDF
-  int    _splitRadio     = 0; // 0=all separate 1=range 2=every N
+  int _splitRadio = 0; // 0=all separate 1=range 2=every N
   final TextEditingController _splitRangeCtrl = TextEditingController();
-  final TextEditingController _splitNCtrl     = TextEditingController();
+  final TextEditingController _splitNCtrl = TextEditingController();
 
   // Image to PDF
-  String _pageSize       = 'A4';
-  String _orientation    = 'Portrait';
+  String _pageSize = 'A4';
+  String _orientation = 'Portrait';
 
   // Image quality
-  String _imgQuality     = 'High';
+  String _imgQuality = 'High';
 
   @override
   void dispose() {
@@ -61,23 +61,23 @@ class _ConversionOptionsState extends State<ConversionOptions> {
 
   void _notify() {
     widget.onOptionsChanged({
-      'ocrEnabled'       : _ocrEnabled,
-      'preserveFormat'   : _preserveFormat,
-      'autoDelete'       : _autoDelete,
-      'removeMetadata'   : _removeMetadata,
-      'transparentBg'    : _transparentBg,
-      'fitToPage'        : _fitToPage,
-      'imageFormat'      : _imageFormat,
-      'imageQuality'     : _imageQuality,
-      'pageRange'        : _pageRange,
-      'customRange'      : _customRangeCtrl.text,
-      'compressionLevel' : _compressionLevel,
-      'splitRadio'       : _splitRadio,
-      'splitRange'       : _splitRangeCtrl.text,
-      'splitN'           : _splitNCtrl.text,
-      'pageSize'         : _pageSize,
-      'orientation'      : _orientation,
-      'imgQuality'       : _imgQuality,
+      'ocrEnabled': _ocrEnabled,
+      'preserveFormat': _preserveFormat,
+      'autoDelete': _autoDelete,
+      'removeMetadata': _removeMetadata,
+      'transparentBg': _transparentBg,
+      'fitToPage': _fitToPage,
+      'imageFormat': _imageFormat,
+      'imageQuality': _imageQuality,
+      'pageRange': _pageRange,
+      'customRange': _customRangeCtrl.text,
+      'compressionLevel': _compressionLevel,
+      'splitRadio': _splitRadio,
+      'splitRange': _splitRangeCtrl.text,
+      'splitN': _splitNCtrl.text,
+      'pageSize': _pageSize,
+      'orientation': _orientation,
+      'imgQuality': _imgQuality,
     });
   }
 
@@ -114,26 +114,32 @@ class _ConversionOptionsState extends State<ConversionOptions> {
       accentColor: widget.tool.accentColor,
       children: [
         _SwitchTile(
-          label     : 'OCR Enabled',
-          subtitle  : 'Extract text from scanned PDFs',
-          value     : _ocrEnabled,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _ocrEnabled = v); _notify(); },
+          label: 'OCR Enabled',
+          subtitle: 'Extract text from scanned PDFs',
+          value: _ocrEnabled,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _ocrEnabled = v);
+            _notify();
+          },
         ),
         _SwitchTile(
-          label    : 'Secure SSL',
-          subtitle : 'Encrypted transfer (always on)',
-          value    : true,
-          color    : widget.tool.accentColor,
-          locked   : true,
+          label: 'Secure SSL',
+          subtitle: 'Encrypted transfer (always on)',
+          value: true,
+          color: widget.tool.accentColor,
+          locked: true,
           onChanged: (_) {},
         ),
         _SwitchTile(
-          label     : 'Auto-delete after 1h',
-          subtitle  : 'Remove file from server after download',
-          value     : _autoDelete,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _autoDelete = v); _notify(); },
+          label: 'Auto-delete after 1h',
+          subtitle: 'Remove file from server after download',
+          value: _autoDelete,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _autoDelete = v);
+            _notify();
+          },
         ),
       ],
     );
@@ -144,26 +150,32 @@ class _ConversionOptionsState extends State<ConversionOptions> {
       accentColor: widget.tool.accentColor,
       children: [
         _SwitchTile(
-          label     : 'Preserve Formatting',
-          subtitle  : 'Keep fonts, styles and layout',
-          value     : _preserveFormat,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _preserveFormat = v); _notify(); },
+          label: 'Preserve Formatting',
+          subtitle: 'Keep fonts, styles and layout',
+          value: _preserveFormat,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _preserveFormat = v);
+            _notify();
+          },
         ),
         _SwitchTile(
-          label    : 'Secure SSL',
-          subtitle : 'Encrypted transfer (always on)',
-          value    : true,
-          color    : widget.tool.accentColor,
-          locked   : true,
+          label: 'Secure SSL',
+          subtitle: 'Encrypted transfer (always on)',
+          value: true,
+          color: widget.tool.accentColor,
+          locked: true,
           onChanged: (_) {},
         ),
         _SwitchTile(
-          label     : 'Auto-delete after 1h',
-          subtitle  : 'Remove file from server after download',
-          value     : _autoDelete,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _autoDelete = v); _notify(); },
+          label: 'Auto-delete after 1h',
+          subtitle: 'Remove file from server after download',
+          value: _autoDelete,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _autoDelete = v);
+            _notify();
+          },
         ),
       ],
     );
@@ -174,32 +186,44 @@ class _ConversionOptionsState extends State<ConversionOptions> {
       accentColor: widget.tool.accentColor,
       children: [
         _DropdownTile(
-          label   : 'Page Size',
-          value   : _pageSize,
-          options : const ['A4', 'Letter', 'Auto'],
-          color   : widget.tool.accentColor,
-          onChanged: (v) { setState(() => _pageSize = v!); _notify(); },
+          label: 'Page Size',
+          value: _pageSize,
+          options: const ['A4', 'Letter', 'Auto'],
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _pageSize = v!);
+            _notify();
+          },
         ),
         _DropdownTile(
-          label   : 'Orientation',
-          value   : _orientation,
-          options : const ['Portrait', 'Landscape'],
-          color   : widget.tool.accentColor,
-          onChanged: (v) { setState(() => _orientation = v!); _notify(); },
+          label: 'Orientation',
+          value: _orientation,
+          options: const ['Portrait', 'Landscape'],
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _orientation = v!);
+            _notify();
+          },
         ),
         _SwitchTile(
-          label     : 'Fit image to page',
-          subtitle  : 'Scale image to fill the page',
-          value     : _fitToPage,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _fitToPage = v); _notify(); },
+          label: 'Fit image to page',
+          subtitle: 'Scale image to fill the page',
+          value: _fitToPage,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _fitToPage = v);
+            _notify();
+          },
         ),
         _SwitchTile(
-          label     : 'Auto-delete after 1h',
-          subtitle  : 'Remove file from server after download',
-          value     : _autoDelete,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _autoDelete = v); _notify(); },
+          label: 'Auto-delete after 1h',
+          subtitle: 'Remove file from server after download',
+          value: _autoDelete,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _autoDelete = v);
+            _notify();
+          },
         ),
       ],
     );
@@ -210,39 +234,48 @@ class _ConversionOptionsState extends State<ConversionOptions> {
       accentColor: widget.tool.accentColor,
       children: [
         _DropdownTile(
-          label   : 'Output Format',
-          value   : _imageFormat,
-          options : const ['JPG', 'PNG', 'WEBP'],
-          color   : widget.tool.accentColor,
-          onChanged: (v) { setState(() => _imageFormat = v!); _notify(); },
+          label: 'Output Format',
+          value: _imageFormat,
+          options: const ['JPG', 'PNG', 'WEBP'],
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _imageFormat = v!);
+            _notify();
+          },
         ),
         _DropdownTile(
-          label   : 'Quality',
-          value   : _imageQuality,
-          options : const ['Low', 'Medium', 'High', 'Ultra'],
-          color   : widget.tool.accentColor,
-          onChanged: (v) { setState(() => _imageQuality = v!); _notify(); },
+          label: 'Quality',
+          value: _imageQuality,
+          options: const ['Low', 'Medium', 'High', 'Ultra'],
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _imageQuality = v!);
+            _notify();
+          },
         ),
         _DropdownTile(
-          label   : 'Pages',
-          value   : _pageRange,
-          options : const ['All Pages', 'Custom Range'],
-          color   : widget.tool.accentColor,
-          onChanged: (v) { setState(() => _pageRange = v!); _notify(); },
+          label: 'Pages',
+          value: _pageRange,
+          options: const ['All Pages', 'Custom Range'],
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _pageRange = v!);
+            _notify();
+          },
         ),
         if (_pageRange == 'Custom Range')
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
             child: TextField(
-              controller  : _customRangeCtrl,
-              onChanged   : (_) => _notify(),
-              decoration  : InputDecoration(
-                hintText     : 'e.g. 1-3, 5, 7',
-                prefixIcon   : const Icon(Icons.pages_rounded, size: 18),
+              controller: _customRangeCtrl,
+              onChanged: (_) => _notify(),
+              decoration: InputDecoration(
+                hintText: 'e.g. 1-3, 5, 7',
+                prefixIcon: const Icon(Icons.pages_rounded, size: 18),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide  : BorderSide(
-                      color: widget.tool.accentColor, width: 1.5),
+                  borderSide:
+                      BorderSide(color: widget.tool.accentColor, width: 1.5),
                 ),
               ),
               keyboardType: TextInputType.text,
@@ -254,7 +287,7 @@ class _ConversionOptionsState extends State<ConversionOptions> {
 
   Widget _compressPdfOptions() {
     final labels = ['Low', 'Medium', 'High'];
-    final label  = labels[_compressionLevel.toInt()];
+    final label = labels[_compressionLevel.toInt()];
 
     return _OptionsCard(
       accentColor: widget.tool.accentColor,
@@ -268,30 +301,30 @@ class _ConversionOptionsState extends State<ConversionOptions> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Compression Level',
-                      style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w600)),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                   Container(
-                    padding    : const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration : BoxDecoration(
-                      color        : widget.tool.accentColor.withOpacity(0.15),
-                      borderRadius : BorderRadius.circular(20),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: widget.tool.accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       label,
                       style: TextStyle(
-                        fontSize   : 12,
-                        fontWeight : FontWeight.bold,
-                        color      : widget.tool.accentColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: widget.tool.accentColor,
                       ),
                     ),
                   ),
                 ],
               ),
               Slider(
-                value    : _compressionLevel,
-                min      : 0,
-                max      : 2,
+                value: _compressionLevel,
+                min: 0,
+                max: 2,
                 divisions: 2,
                 onChanged: (v) {
                   setState(() => _compressionLevel = v);
@@ -305,7 +338,7 @@ class _ConversionOptionsState extends State<ConversionOptions> {
                         style: TextStyle(
                             fontSize: 11,
                             color: widget.tool.accentColor
-                                .withOpacity(0.7))))
+                                .withValues(alpha: 0.7))))
                     .toList(),
               ),
               const SizedBox(height: 4),
@@ -315,25 +348,30 @@ class _ConversionOptionsState extends State<ConversionOptions> {
                     : label == 'Medium'
                         ? '🟡 Estimated reduction: ~50%'
                         : '🔴 Estimated reduction: ~75%',
-                style: const TextStyle(
-                    fontSize: 12, color: Colors.grey),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
         ),
         _SwitchTile(
-          label     : 'Remove Metadata',
-          subtitle  : 'Strip author, keywords, etc.',
-          value     : _removeMetadata,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _removeMetadata = v); _notify(); },
+          label: 'Remove Metadata',
+          subtitle: 'Strip author, keywords, etc.',
+          value: _removeMetadata,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _removeMetadata = v);
+            _notify();
+          },
         ),
         _SwitchTile(
-          label     : 'Auto-delete after 1h',
-          subtitle  : 'Remove file from server after download',
-          value     : _autoDelete,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _autoDelete = v); _notify(); },
+          label: 'Auto-delete after 1h',
+          subtitle: 'Remove file from server after download',
+          value: _autoDelete,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _autoDelete = v);
+            _notify();
+          },
         ),
       ],
     );
@@ -356,17 +394,15 @@ class _ConversionOptionsState extends State<ConversionOptions> {
           'Split every N pages',
         ].asMap().entries.map((e) {
           return RadioListTile<int>(
-            value      : e.key,
-            groupValue : _splitRadio,
+            value: e.key,
+            groupValue: _splitRadio,
             activeColor: widget.tool.accentColor,
-            title: Text(e.value,
-                style: const TextStyle(fontSize: 13)),
+            title: Text(e.value, style: const TextStyle(fontSize: 13)),
             onChanged: (v) {
               setState(() => _splitRadio = v!);
               _notify();
             },
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             dense: true,
           );
         }),
@@ -376,14 +412,14 @@ class _ConversionOptionsState extends State<ConversionOptions> {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
             child: TextField(
               controller: _splitRangeCtrl,
-              onChanged : (_) => _notify(),
+              onChanged: (_) => _notify(),
               decoration: InputDecoration(
-                hintText : 'e.g. 1-3, 5, 7',
+                hintText: 'e.g. 1-3, 5, 7',
                 prefixIcon: const Icon(Icons.pages_rounded, size: 18),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide  : BorderSide(
-                      color: widget.tool.accentColor, width: 1.5),
+                  borderSide:
+                      BorderSide(color: widget.tool.accentColor, width: 1.5),
                 ),
               ),
             ),
@@ -393,16 +429,16 @@ class _ConversionOptionsState extends State<ConversionOptions> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
             child: TextField(
-              controller  : _splitNCtrl,
-              onChanged   : (_) => _notify(),
+              controller: _splitNCtrl,
+              onChanged: (_) => _notify(),
               keyboardType: TextInputType.number,
-              decoration  : InputDecoration(
-                hintText : 'Number of pages e.g. 2',
+              decoration: InputDecoration(
+                hintText: 'Number of pages e.g. 2',
                 prefixIcon: const Icon(Icons.filter_none_rounded, size: 18),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide  : BorderSide(
-                      color: widget.tool.accentColor, width: 1.5),
+                  borderSide:
+                      BorderSide(color: widget.tool.accentColor, width: 1.5),
                 ),
               ),
             ),
@@ -420,19 +456,22 @@ class _ConversionOptionsState extends State<ConversionOptions> {
       accentColor: widget.tool.accentColor,
       children: [
         _DropdownTile(
-          label   : 'Quality',
-          value   : _imgQuality,
-          options : const ['Lossless', 'High', 'Medium'],
-          color   : widget.tool.accentColor,
-          onChanged: (v) { setState(() => _imgQuality = v!); _notify(); },
+          label: 'Quality',
+          value: _imgQuality,
+          options: const ['Lossless', 'High', 'Medium'],
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _imgQuality = v!);
+            _notify();
+          },
         ),
         if (isPngOutput)
           _SwitchTile(
-            label     : 'Transparent Background',
-            subtitle  : 'Remove white background (PNG only)',
-            value     : _transparentBg,
-            color     : widget.tool.accentColor,
-            onChanged : (v) {
+            label: 'Transparent Background',
+            subtitle: 'Remove white background (PNG only)',
+            value: _transparentBg,
+            color: widget.tool.accentColor,
+            onChanged: (v) {
               setState(() => _transparentBg = v);
               _notify();
             },
@@ -446,26 +485,32 @@ class _ConversionOptionsState extends State<ConversionOptions> {
       accentColor: widget.tool.accentColor,
       children: [
         _SwitchTile(
-          label     : 'Preserve Formatting',
-          subtitle  : 'Keep fonts, styles and layout',
-          value     : _preserveFormat,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _preserveFormat = v); _notify(); },
+          label: 'Preserve Formatting',
+          subtitle: 'Keep fonts, styles and layout',
+          value: _preserveFormat,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _preserveFormat = v);
+            _notify();
+          },
         ),
         _SwitchTile(
-          label    : 'Secure SSL',
-          subtitle : 'Encrypted transfer (always on)',
-          value    : true,
-          color    : widget.tool.accentColor,
-          locked   : true,
+          label: 'Secure SSL',
+          subtitle: 'Encrypted transfer (always on)',
+          value: true,
+          color: widget.tool.accentColor,
+          locked: true,
           onChanged: (_) {},
         ),
         _SwitchTile(
-          label     : 'Auto-delete after 1h',
-          subtitle  : 'Remove file from server after download',
-          value     : _autoDelete,
-          color     : widget.tool.accentColor,
-          onChanged : (v) { setState(() => _autoDelete = v); _notify(); },
+          label: 'Auto-delete after 1h',
+          subtitle: 'Remove file from server after download',
+          value: _autoDelete,
+          color: widget.tool.accentColor,
+          onChanged: (v) {
+            setState(() => _autoDelete = v);
+            _notify();
+          },
         ),
       ],
     );
@@ -482,24 +527,24 @@ class _OptionsCard extends StatelessWidget {
     required this.children,
   });
 
-  final Color         accentColor;
-  final List<Widget>  children;
+  final Color accentColor;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      width      : double.infinity,
-      decoration : BoxDecoration(
-        color        : isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius : BorderRadius.circular(16),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: isDark
             ? []
             : [
                 BoxShadow(
-                  color      : Colors.black.withOpacity(0.05),
-                  blurRadius : 8,
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
                 ),
               ],
       ),
@@ -515,9 +560,9 @@ class _OptionsCard extends StatelessWidget {
                 Text(
                   'Conversion Options',
                   style: TextStyle(
-                    fontSize   : 14,
-                    fontWeight : FontWeight.bold,
-                    color      : accentColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
                   ),
                 ),
               ],
@@ -542,26 +587,26 @@ class _SwitchTile extends StatelessWidget {
     this.locked = false,
   });
 
-  final String            label;
-  final String?           subtitle;
-  final bool              value;
-  final Color             color;
-  final bool              locked;
+  final String label;
+  final String? subtitle;
+  final bool value;
+  final Color color;
+  final bool locked;
   final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      title    : Text(label,
+      title: Text(label,
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-      subtitle : subtitle != null
+      subtitle: subtitle != null
           ? Text(subtitle!,
               style: const TextStyle(fontSize: 11, color: Colors.grey))
           : null,
-      value    : value,
-      activeColor: color,
-      onChanged  : locked ? null : onChanged,
-      dense      : true,
+      value: value,
+      activeThumbColor: color,
+      onChanged: locked ? null : onChanged,
+      dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
     );
   }
@@ -576,11 +621,11 @@ class _DropdownTile extends StatelessWidget {
     required this.onChanged,
   });
 
-  final String                  label;
-  final String                  value;
-  final List<String>            options;
-  final Color                   color;
-  final ValueChanged<String?>   onChanged;
+  final String label;
+  final String value;
+  final List<String> options;
+  final Color color;
+  final ValueChanged<String?> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -592,35 +637,32 @@ class _DropdownTile extends StatelessWidget {
         children: [
           Expanded(
             child: Text(label,
-                style: const TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600)),
+                style:
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
           ),
           Container(
-            padding    : const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 4),
-            decoration : BoxDecoration(
-              color        : isDark
-                  ? const Color(0xFF2A2A2A)
-                  : const Color(0xFFF5F5F5),
-              borderRadius : BorderRadius.circular(10),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF5F5F5),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
               ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value     : value,
-                isDense   : true,
-                icon      : Icon(Icons.keyboard_arrow_down_rounded,
-                    size: 16, color : color),
-                style     : TextStyle(
-                    fontSize   : 13,
-                    fontWeight : FontWeight.w600,
-                    color      : isDark ? Colors.white : const Color(0xFF212121)),
-                items     : options
+                value: value,
+                isDense: true,
+                icon: Icon(Icons.keyboard_arrow_down_rounded,
+                    size: 16, color: color),
+                style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF212121)),
+                items: options
                     .map((o) => DropdownMenuItem(value: o, child: Text(o)))
                     .toList(),
-                onChanged : onChanged,
+                onChanged: onChanged,
               ),
             ),
           ),

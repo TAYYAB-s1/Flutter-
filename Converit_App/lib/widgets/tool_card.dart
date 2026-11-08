@@ -10,7 +10,7 @@ class ToolCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final ToolModel    tool;
+  final ToolModel tool;
   final VoidCallback onTap;
 
   @override
@@ -21,15 +21,15 @@ class ToolCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color        : isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          borderRadius : BorderRadius.circular(16),
-          boxShadow    : isDark
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark
               ? []
               : [
                   BoxShadow(
-                    color      : Colors.black.withOpacity(0.07),
-                    blurRadius : 10,
-                    offset     : const Offset(0, 4),
+                    color: Colors.black.withValues(alpha: 0.07),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
         ),
@@ -39,16 +39,16 @@ class ToolCard extends StatelessWidget {
           children: [
             // ── Icon circle ──────────────────────────────────────────────
             Container(
-              width      : 46,
-              height     : 46,
-              decoration : BoxDecoration(
-                color        : tool.accentColor.withOpacity(0.15),
-                borderRadius : BorderRadius.circular(12),
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: tool.accentColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 tool.icon,
-                color : tool.accentColor,
-                size  : 24,
+                color: tool.accentColor,
+                size: 24,
               ),
             ),
 
@@ -58,12 +58,12 @@ class ToolCard extends StatelessWidget {
             Text(
               tool.name,
               style: TextStyle(
-                fontSize   : 14,
-                fontWeight : FontWeight.w700,
-                color      : isDark ? Colors.white : const Color(0xFF212121),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : const Color(0xFF212121),
               ),
-              maxLines  : 1,
-              overflow  : TextOverflow.ellipsis,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
 
             const SizedBox(height: 4),
@@ -73,14 +73,14 @@ class ToolCard extends StatelessWidget {
               child: Text(
                 tool.description,
                 style: TextStyle(
-                  fontSize : 11,
-                  color    : isDark
+                  fontSize: 11,
+                  color: isDark
                       ? const Color(0xFFAAAAAA)
                       : const Color(0xFF757575),
-                  height   : 1.4,
+                  height: 1.4,
                 ),
-                maxLines  : 2,
-                overflow  : TextOverflow.ellipsis,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
 
@@ -91,18 +91,18 @@ class ToolCard extends StatelessWidget {
               children: [
                 // Input → Output badge
                 Container(
-                  padding    : const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
-                  decoration : BoxDecoration(
-                    color        : tool.accentColor.withOpacity(0.12),
-                    borderRadius : BorderRadius.circular(20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: tool.accentColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     '${tool.inputFormat.toUpperCase()} → ${tool.outputFormat.toUpperCase()}',
                     style: TextStyle(
-                      fontSize   : 10,
-                      fontWeight : FontWeight.w600,
-                      color      : tool.accentColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: tool.accentColor,
                     ),
                   ),
                 ),
@@ -111,16 +111,16 @@ class ToolCard extends StatelessWidget {
 
                 // Arrow icon
                 Container(
-                  width      : 26,
-                  height     : 26,
-                  decoration : BoxDecoration(
-                    color        : tool.accentColor.withOpacity(0.12),
-                    borderRadius : BorderRadius.circular(8),
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    color: tool.accentColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.arrow_forward_rounded,
-                    size  : 14,
-                    color : tool.accentColor,
+                    size: 14,
+                    color: tool.accentColor,
                   ),
                 ),
               ],

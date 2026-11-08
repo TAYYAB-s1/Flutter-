@@ -122,8 +122,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
       final appDir = await getApplicationDocumentsDirectory();
       final extension = picked.path.split('.').last;
       final permanentFileName = '${const Uuid().v4()}.$extension';
-      final permanentFile = await File(picked.path)
-          .copy('${appDir.path}/$permanentFileName');
+      final permanentFile =
+          await File(picked.path).copy('${appDir.path}/$permanentFileName');
 
       setState(() {
         _pickedImagePath = permanentFile.path;
@@ -350,7 +350,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
               const SizedBox(height: 8),
               if (!_showCustomCategoryField)
                 DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   items: categoryOptions
                       .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                       .toList(),
@@ -444,8 +444,8 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                     ),
                   ),
                   onPressed: _isSavingImage ? null : _saveProduct,
-                  child:
-                      const Text('Save Product', style: TextStyle(fontSize: 16)),
+                  child: const Text('Save Product',
+                      style: TextStyle(fontSize: 16)),
                 ),
               ),
             ],

@@ -80,7 +80,10 @@ class EpisodeListItem extends StatelessWidget {
                             const SizedBox(width: 6),
                             Text(
                               'CURRENT OBJECTIVE',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
                                     fontWeight: FontWeight.w900,
                                     color: AppColors.comicRed,
                                   ),
@@ -105,7 +108,8 @@ class EpisodeListItem extends StatelessWidget {
               else if (isCurrent)
                 Icon(Icons.play_circle_fill, size: 26, color: accentColor)
               else if (!isCompleted)
-                Icon(Icons.chevron_right, size: 22, color: outline.withOpacity(0.6)),
+                Icon(Icons.chevron_right,
+                    size: 22, color: outline.withValues(alpha: 0.6)),
             ],
           ),
         ),
@@ -129,7 +133,9 @@ class _StepBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = isCompleted ? AppColors.success : (isLocked ? AppColors.locked : accentColor);
+    final bgColor = isCompleted
+        ? AppColors.success
+        : (isLocked ? AppColors.locked : accentColor);
 
     return Container(
       width: 32,
@@ -144,7 +150,10 @@ class _StepBadge extends StatelessWidget {
           ? const Icon(Icons.check, size: 18, color: Colors.white)
           : Text(
               '$number',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 14),
             ),
     );
   }
