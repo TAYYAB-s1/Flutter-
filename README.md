@@ -25,6 +25,8 @@ and requirements can be found in the relevant project directory.
 
 ## About This Repository
 
+
+vide coding final boss :)
 This repository will evolve as new applications are created and completed. Some projects
 may be production-ready, while others may be works in progress or learning experiments.
 
