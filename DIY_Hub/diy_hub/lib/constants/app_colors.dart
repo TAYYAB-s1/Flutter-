@@ -1,61 +1,96 @@
 // lib/constants/app_colors.dart
-// Central color palette for DIYHub's comic-book visual style.
-// Every screen/widget should pull colors from here — never hardcode hex values elsewhere.
+// Central color palette for DIYHub's light neo-brutalist arcade style.
+// Every screen/widget must take colors from here, never hardcode hex values.
+//
+// Hex values are approximated from the design reference, so tweak them here
+// and the whole app updates.
 
 import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._(); // prevent instantiation
 
-  // ── Core comic brand colors (used across both themes) ──────────────
-  static const Color comicYellow = Color(0xFFFFC107);
-  static const Color comicBlue = Color(0xFF1E88E5);
-  static const Color comicRed = Color(0xFFE53935);
-  static const Color comicGreen = Color(0xFF43A047);
-  static const Color comicOrange = Color(0xFFFB8C00);
-  static const Color comicPurple = Color(0xFF8E24AA);
+  // ── Core tokens ──────────────────────────────────────────────────
+  /// Page background (warm cream).
+  static const Color cream = Color(0xFFF1EFE7);
 
-  // ── Light comic mode ─────────────────────────────────────────────
-  static const Color lightBackground = Color(0xFFF5F0E1); // cream/off-white
-  static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightAppBar = Color(0xFFFFFFFF);
-  static const Color lightTextPrimary = Color(0xFF1A1A1A);
-  static const Color lightTextSecondary = Color(0xFF6B6B6B);
-  static const Color lightDivider = Color(0xFFE0DCC8);
-  static const Color lightOutline = Color(0xFF000000); // bold black outlines
-  static const Color lightHalftoneDot = Color(0x1A000000); // faint black dots
+  /// Ink black: text, borders, hard shadows, header, bottom nav, player stage.
+  static const Color ink = Color(0xFF0A0A0A);
 
-  // ── Dark comic mode ──────────────────────────────────────────────
-  static const Color darkBackground = Color(0xFF121220);
-  static const Color darkSurface = Color(0xFF1E1E2E);
-  static const Color darkAppBar = Color(0xFF1A1A2E);
-  static const Color darkTextPrimary = Color(0xFFFFFFFF);
-  static const Color darkTextSecondary = Color(0xFFAAAAAA);
-  static const Color darkDivider = Color(0xFF2C2C3E);
-  static const Color darkOutline = Color(0xFFFFFFFF); // bright outlines on dark
-  static const Color darkHalftoneDot = Color(0x1AFFFFFF); // faint white dots
+  /// Card / input surface.
+  static const Color white = Color(0xFFFFFFFF);
 
-  // ── Rank colors (Novice / Cadet / Master badges) ────────────────
-  static const Color rankNovice = Color(0xFF43A047); // green
-  static const Color rankCadet = Color(0xFF1E88E5); // blue
-  static const Color rankMaster = Color(0xFFE53935); // red
+  /// Secondary text.
+  static const Color muted = Color(0xFF5B5B57);
 
-  // ── Hero Tier colors (onboarding age select) ────────────────────
-  static const Color tierKids = Color(0xFF1E88E5); // Rookie Builders
-  static const Color tierTeens = Color(0xFFFFC107); // Maker Cadets
-  static const Color tierAdult = Color(0xFF1A1A1A); // Master Artisans
+  /// Action yellow: ONLY for primary buttons, the dice button, the active
+  /// bottom-nav tab and hazard stripes.
+  static const Color actionYellow = Color(0xFFFFD93D);
 
-  // ── Category accent colors (mission categories) ─────────────────
-  static const Color categoryElectronics = Color(0xFFFDD835); // yellow/gold
-  static const Color categoryHomeRepair = Color(0xFFFFCA28); // warm yellow
-  static const Color categoryWoodcraft = Color(0xFFFFB300); // amber
-  static const Color categoryCookingLab = Color(0xFFEF9A9A); // soft red/pink
-  static const Color categoryRobotics = Color(0xFF90CAF9); // soft blue
-  static const Color categoryGardening = Color(0xFF81C784); // soft green
+  /// Faint ink dots used by the halftone pattern (about 15% opacity).
+  static const Color halftoneDot = Color(0x260A0A0A);
 
-  // ── Semantic / status colors ─────────────────────────────────────
-  static const Color success = Color(0xFF43A047);
-  static const Color warning = Color(0xFFFB8C00);
-  static const Color error = Color(0xFFE53935);
-  static const Color locked = Color(0xFF9E9E9E);
+  /// Faint white lines used by the pixel grid on the black stage.
+  static const Color stageGrid = Color(0x14FFFFFF);
+
+  // ── Category colors (flat fills) ────────────────────────────────
+  static const Color categoryElectronics = Color(0xFFA78BFA); // purple
+  static const Color categoryHomeRepair = Color(0xFFF0504A); // red
+  static const Color categoryWoodcraft = Color(0xFFFF9F43); // orange
+  static const Color categoryCookingLab = Color(0xFFF472B6); // pink
+  static const Color categoryRobotics = Color(0xFF38A3F0); // blue
+  static const Color categoryGardening = Color(0xFF34D27B); // green
+
+  // ── Status colors ───────────────────────────────────────────────
+  static const Color success = Color(0xFF34D27B); // completed
+  static const Color danger = Color(0xFFF0504A); // destructive
+  static const Color locked = Color(0xFFB8B5AA); // locked / disabled
+  static const Color inProgress = Color(0xFF38A3F0); // in-progress pill
+
+  // ── Rank colors (rank card on the Progress screen) ──────────────
+  static const Color rankNovice = Color(0xFF34D27B);
+  static const Color rankCadet = Color(0xFFA78BFA);
+  static const Color rankMaster = Color(0xFFF0504A);
+
+  // ── Hero Tier colors (onboarding cards) ─────────────────────────
+  static const Color tierKids = Color(0xFF34D27B); // Rookie Builders
+  static const Color tierTeens = Color(0xFF38A3F0); // Maker Cadets
+  static const Color tierAdult = Color(0xFFF472B6); // Master Artisans
+
+  // ═════════════════════════════════════════════════════════════
+  // LEGACY ALIASES
+  // The screens from the comic-style version still use these names.
+  // They are mapped onto the new palette so the app keeps compiling
+  // while each screen is restyled. Remove them once every screen has
+  // been migrated (Phase F).
+  // ═════════════════════════════════════════════════════════════
+  static const Color comicYellow = actionYellow;
+  static const Color comicBlue = categoryRobotics;
+  static const Color comicRed = danger;
+  static const Color comicGreen = success;
+  static const Color comicOrange = categoryWoodcraft;
+  static const Color comicPurple = categoryElectronics;
+
+  static const Color lightBackground = cream;
+  static const Color lightSurface = white;
+  static const Color lightAppBar = ink;
+  static const Color lightTextPrimary = ink;
+  static const Color lightTextSecondary = muted;
+  static const Color lightDivider = Color(0xFFD6D2C4);
+  static const Color lightOutline = ink;
+  static const Color lightHalftoneDot = halftoneDot;
+
+  // Dark values are unused (the app is light-only) but kept so old
+  // `isDark ? dark : light` expressions still compile.
+  static const Color darkBackground = ink;
+  static const Color darkSurface = Color(0xFF161616);
+  static const Color darkAppBar = ink;
+  static const Color darkTextPrimary = white;
+  static const Color darkTextSecondary = Color(0xFFB8B5AA);
+  static const Color darkDivider = Color(0xFF2A2A2A);
+  static const Color darkOutline = white;
+  static const Color darkHalftoneDot = Color(0x1AFFFFFF);
+
+  static const Color error = danger;
+  static const Color warning = categoryWoodcraft;
 }
