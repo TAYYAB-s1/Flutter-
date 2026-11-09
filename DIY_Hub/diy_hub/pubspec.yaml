@@ -1,5 +1,5 @@
 name: diyhub
-description: "DIYHub - A comic-book style DIY skills learning app for all ages."
+description: "DIYHub - A neo-brutalist arcade-style DIY skills learning app for all ages."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -26,10 +26,24 @@ flutter:
   assets:
     - assets/icon/icon.png
 
+  # Bundled free (OFL) fonts. Body text uses the platform default sans-serif.
+  fonts:
+    - family: ArchivoBlack
+      fonts:
+        - asset: assets/fonts/ArchivoBlack-Regular.ttf
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+        - asset: assets/fonts/JetBrainsMono-Bold.ttf
+          weight: 700
+    - family: PressStart2P
+      fonts:
+        - asset: assets/fonts/PressStart2P-Regular.ttf
+
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icon/icon.png"
   min_sdk_android: 21
-  adaptive_icon_background: "#1E88E5"
+  adaptive_icon_background: "#FFD93D"
   adaptive_icon_foreground: "assets/icon/icon.png"
