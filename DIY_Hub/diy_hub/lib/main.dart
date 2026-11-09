@@ -1,22 +1,24 @@
 // lib/main.dart
-// App entry point. Loads the saved theme mode and onboarding status before
-// building the MaterialApp, and exposes a ThemeController InheritedWidget
-// so any screen (e.g. Settings, built in a later phase) can change the
-// theme mode with `ThemeController.of(context).setThemeMode(mode)` —
-// no external state management package needed.
-// NOTE: This is a functional Phase 1 version. The Settings screen and theme
+// App entry point. Shows the splash screen while the saved onboarding state
+// loads, then routes to Onboarding (first launch) or Home.
+//
+// The app is LIGHT-ONLY: there is no dark theme. ThemeController is kept so
+// the old Settings screen still compiles, but changing the mode does nothing.
+// (The Settings restyle in a later phase removes that UI entirely.)
+
 import 'package:flutter/material.dart';
 import 'constants/app_theme.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/progress_service.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-/// Lets descendant widgets read the current theme mode and request changes,
-/// without needing Provider/Riverpod/Bloc.
+/// Lets descendant widgets read the theme mode and request changes, without
+/// needing Provider/Riverpod/Bloc. Kept for backwards compatibility only.
 class ThemeController extends InheritedWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> setThemeMode;
@@ -29,13 +31,15 @@ class ThemeController extends InheritedWidget {
   });
 
   static ThemeController of(BuildContext context) {
-    final controller = context.dependOnInheritedWidgetOfExactType<ThemeController>();
+    final controller =
+        context.dependOnInheritedWidgetOfExactType<ThemeController>();
     assert(controller != null, 'ThemeController not found in widget tree');
     return controller!;
   }
 
   @override
-  bool updateShouldNotify(ThemeController oldWidget) => themeMode != oldWidget.themeMode;
+  bool updateShouldNotify(ThemeController oldWidget) =>
+      themeMode != oldWidget.themeMode;
 }
 
 class MyApp extends StatefulWidget {
@@ -46,9 +50,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  /// Minimum time the splash stays visible so it doesn't just flash.
+  static const Duration _minSplash = Duration(milliseconds: 900);
+
   final _progressService = ProgressService();
 
-  ThemeMode _themeMode = ThemeMode.system;
   bool _onboardingComplete = false;
   bool _loading = true;
 
@@ -59,42 +65,35 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _loadInitialState() async {
-    final mode = await _progressService.getThemeMode();
-    final onboarded = await _progressService.isOnboardingComplete();
+    final results = await Future.wait<dynamic>([
+      _progressService.isOnboardingComplete(),
+      Future<void>.delayed(_minSplash),
+    ]);
     if (!mounted) return;
     setState(() {
-      _themeMode = mode;
-      _onboardingComplete = onboarded;
+      _onboardingComplete = results[0] as bool;
       _loading = false;
     });
   }
 
-  void _updateThemeMode(ThemeMode mode) {
-    setState(() => _themeMode = mode);
-    _progressService.setThemeMode(mode);
-  }
+  /// No-op: the app is light-only.
+  void _ignoreThemeChange(ThemeMode mode) {}
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    }
-
     return ThemeController(
-      themeMode: _themeMode,
-      setThemeMode: _updateThemeMode,
+      themeMode: ThemeMode.light,
+      setThemeMode: _ignoreThemeChange,
       child: MaterialApp(
         title: 'DIYHub',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        themeMode: _themeMode,
-        home: _onboardingComplete ? const HomeScreen() : const OnboardingScreen(),
+        themeMode: ThemeMode.light,
+        home: _loading
+            ? const SplashScreen()
+            : (_onboardingComplete
+                ? const HomeScreen()
+                : const OnboardingScreen()),
       ),
     );
   }
