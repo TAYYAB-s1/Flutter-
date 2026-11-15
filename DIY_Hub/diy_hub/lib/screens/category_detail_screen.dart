@@ -68,7 +68,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
     if (_searchQuery.trim().isNotEmpty) {
       final query = _searchQuery.trim().toLowerCase();
       result = result.where(
-        (s) => s.title.toLowerCase().contains(query) || s.description.toLowerCase().contains(query),
+        (s) =>
+            s.title.toLowerCase().contains(query) ||
+            s.description.toLowerCase().contains(query),
       );
     }
 
@@ -114,7 +116,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
               final label = filters[index];
               final isSelected = _selectedFilter == label;
               return ChoiceChip(
-                label: Text(label == 'All' ? 'All Missions (${SkillsData.all.length})' : label),
+                label: Text(label == 'All'
+                    ? 'All Missions (${SkillsData.all.length})'
+                    : label),
                 selected: isSelected,
                 onSelected: (_) => setState(() => _selectedFilter = label),
               );
@@ -131,7 +135,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   separatorBuilder: (_, __) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
                     final skill = skills[index];
-                    final isFavorite = _progressBySkill[skill.id]?.isFavorite ?? false;
+                    final isFavorite =
+                        _progressBySkill[skill.id]?.isFavorite ?? false;
                     return MissionCard(
                       skill: skill,
                       isFavorite: isFavorite,
@@ -141,7 +146,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           widget.onOpenSkill!(skill);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Mission Detail — coming in Phase 3')),
+                            const SnackBar(
+                                content:
+                                    Text('Mission Detail — coming in Phase 3')),
                           );
                         }
                       },
@@ -167,10 +174,13 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off, size: 48, color: Theme.of(context).textTheme.bodySmall?.color),
+            Icon(Icons.search_off,
+                size: 48, color: Theme.of(context).textTheme.bodySmall?.color),
             const SizedBox(height: 12),
             Text(
-              query.isEmpty ? 'No missions match this filter' : 'No missions found for "$query"',
+              query.isEmpty
+                  ? 'No missions match this filter'
+                  : 'No missions found for "$query"',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
