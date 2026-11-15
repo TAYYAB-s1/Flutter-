@@ -1,208 +1,192 @@
 // lib/widgets/mission_card.dart
-// The core comic-panel card used everywhere a mission (Skill) is listed:
-// Home's Trending Quests, the Category screen list, Favorites, etc.
+// The mission card used everywhere a mission (Skill) is listed. White card
+// with a thick border and hard shadow:
+//   cover (rank badge top-left, XP tag top-right, bookmark bottom-right)
+//   title, "Robotics • 4 Episodes", optional progress bar,
+//   time tag + tier tag + yellow play button.
+//
+// The card adapts to narrow widths (2-column grids on small phones) by
+// showing only the stars on the rank badge.
 
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_theme.dart';
+import '../constants/category_style.dart';
 import '../models/skill_model.dart';
-import 'comic_burst_badge.dart';
-import 'halftone_background.dart';
+import 'block_progress_bar.dart';
+import 'brutal_card.dart';
+import 'mission_cover.dart';
+import 'rank_badge.dart';
+import 'tech_tag.dart';
+import 'xp_tag.dart';
 
 class MissionCard extends StatelessWidget {
   final SkillModel skill;
   final VoidCallback onTap;
-  final String? burstLabel;
   final bool isFavorite;
+
+  /// Shows the bookmark button on the cover when provided.
   final VoidCallback? onFavoriteToggle;
+
+  /// 0..1. Shows a progress bar when greater than 0 and not completed.
+  final double progressPercent;
+
+  /// Shows a green check on the cover.
+  final bool completed;
 
   const MissionCard({
     super.key,
     required this.skill,
     required this.onTap,
-    this.burstLabel,
     this.isFavorite = false,
     this.onFavoriteToggle,
+    this.progressPercent = 0,
+    this.completed = false,
   });
-
-  Color _rankColor() {
-    switch (skill.difficultyRank) {
-      case DifficultyRank.novice:
-        return AppColors.rankNovice;
-      case DifficultyRank.cadet:
-        return AppColors.rankCadet;
-      case DifficultyRank.master:
-        return AppColors.rankMaster;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final outline = isDark ? AppColors.darkOutline : AppColors.lightOutline;
+    final inProgress = progressPercent > 0 && !completed;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Illustration header area ──────────────────────────
-            SizedBox(
-              height: 130,
-              width: double.infinity,
-              child: HalftoneBackground(
-                dotColor: Colors.black.withValues(alpha: 0.08),
-                child: Container(
-                  color: skill.accentColor.withValues(alpha: 0.35),
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: Icon(skill.icon, size: 56, color: outline),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 200;
+
+        return BrutalCard(
+          onTap: onTap,
+          clipBehavior: Clip.hardEdge,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              MissionCover(
+                skill: skill,
+                aspectRatio: 1.7,
+                iconBoxSize: compact ? 48 : 56,
+                topLeft:
+                    RankBadge(rank: skill.difficultyRank, showLabel: !compact),
+                topRight: XpTag(xp: skill.xpReward),
+                bottomLeft: completed ? const _DoneSticker() : null,
+                bottomRight: onFavoriteToggle == null
+                    ? null
+                    : _BookmarkButton(
+                        isFavorite: isFavorite, onTap: onFavoriteToggle!),
+              ),
+              Container(height: AppTheme.borderWidth, color: AppColors.ink),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      skill.title.toUpperCase(),
+                      style: AppText.display(
+                          size: compact ? 14 : 16, height: 1.15),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${CategoryStyle.shortLabel(skill.category)} • ${skill.lessons.length} Episodes',
+                      style: AppText.caption(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (inProgress) ...[
+                      const SizedBox(height: 10),
+                      BlockProgressBar(
+                        percent: progressPercent,
+                        blocks: 8,
+                        height: 10,
+                        fillColor: skill.accentColor,
                       ),
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: _RankPill(
-                            rank: skill.difficultyRank, color: _rankColor()),
-                      ),
-                      if (burstLabel != null)
-                        Positioned(
-                          top: -6,
-                          right: -6,
-                          child: ComicBurstBadge(text: burstLabel!, size: 48),
-                        ),
-                      if (onFavoriteToggle != null)
-                        Positioned(
-                          bottom: 8,
-                          right: 8,
-                          child: _FavoriteButton(
-                            isFavorite: isFavorite,
-                            onTap: onFavoriteToggle!,
-                          ),
-                        ),
                     ],
-                  ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        TechTag.time(skill.estimatedMinutes),
+                        TechTag.tier(skill.minHeroTier),
+                        const _PlayButton(),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
-
-            // ── Text content ───────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    skill.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    skill.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.schedule,
-                          size: 14,
-                          color: Theme.of(context).textTheme.bodySmall?.color),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${skill.estimatedMinutes} mins • ${skill.stepCount} steps',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.bolt,
-                              size: 16, color: AppColors.comicYellow),
-                          const SizedBox(width: 2),
-                          Text('+${skill.xpReward} XP',
-                              style: Theme.of(context).textTheme.bodySmall),
-                        ],
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: skill.accentColor,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 8),
-                        ),
-                        onPressed: onTap,
-                        child: const Text('START CRAFT →',
-                            style: TextStyle(fontSize: 12)),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
-class _RankPill extends StatelessWidget {
-  final DifficultyRank rank;
-  final Color color;
-
-  const _RankPill({required this.rank, required this.color});
+/// Yellow square play button (decorative: the whole card is tappable).
+class _PlayButton extends StatelessWidget {
+  const _PlayButton();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      width: 36,
+      height: 36,
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.black, width: 1.5),
+        color: AppColors.actionYellow,
+        border: Border.fromBorderSide(AppTheme.tagBorder),
       ),
-      child: Text(
-        '${'★' * rank.starCount} ${rank.label.toUpperCase()}',
-        style: const TextStyle(
-            color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
+      child: const Icon(Icons.play_arrow, size: 22, color: AppColors.ink),
+    );
+  }
+}
+
+class _BookmarkButton extends StatelessWidget {
+  final bool isFavorite;
+  final VoidCallback onTap;
+
+  const _BookmarkButton({required this.isFavorite, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: isFavorite ? 'Remove from saved' : 'Save mission',
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: isFavorite ? AppColors.actionYellow : AppColors.white,
+            border: Border.fromBorderSide(AppTheme.tagBorder),
+          ),
+          child: Icon(
+            isFavorite ? Icons.bookmark : Icons.bookmark_border,
+            size: 20,
+            color: AppColors.ink,
+          ),
+        ),
       ),
     );
   }
 }
 
-class _FavoriteButton extends StatelessWidget {
-  final bool isFavorite;
-  final VoidCallback onTap;
-
-  const _FavoriteButton({required this.isFavorite, required this.onTap});
+class _DoneSticker extends StatelessWidget {
+  const _DoneSticker();
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.black, width: 1.5),
-        ),
-        child: Icon(
-          isFavorite ? Icons.bookmark : Icons.bookmark_border,
-          size: 16,
-          color: Colors.black,
-        ),
+    return Container(
+      width: 30,
+      height: 30,
+      decoration: BoxDecoration(
+        color: AppColors.success,
+        border: Border.fromBorderSide(AppTheme.tagBorder),
       ),
+      child: const Icon(Icons.check, size: 18, color: AppColors.ink),
     );
   }
 }
