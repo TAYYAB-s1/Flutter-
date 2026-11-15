@@ -1,12 +1,20 @@
 // lib/screens/onboarding_screen.dart
-// "Choose Your Hero Tier" — shown once on first launch.
-// NOTE: This is a functional Phase 1 version. Full comic-panel styling,
-// halftone backgrounds, and burst badges are added in the Screens phase.
+// "CHOOSE YOUR HERO TIER": shown once on first launch. The user picks one of
+// three age tiers; the choice is saved with ProgressService.completeOnboarding
+// and the app continues to Home. Logic is unchanged from the old version,
+// only the look is new.
 
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_theme.dart';
 import '../models/skill_model.dart';
 import '../services/progress_service.dart';
+import '../widgets/app_header.dart';
+import '../widgets/brutal_button.dart';
+import '../widgets/brutal_card.dart';
+import '../widgets/halftone_background.dart';
+import '../widgets/hazard_strip.dart';
+import '../widgets/mission_cover.dart';
 import 'home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -22,9 +30,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _submitting = false;
 
   Future<void> _confirmSelection() async {
-    if (_selectedTier == null) return;
+    final tier = _selectedTier;
+    if (tier == null) return;
     setState(() => _submitting = true);
-    await _progressService.completeOnboarding(_selectedTier!);
+    await _progressService.completeOnboarding(tier);
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -56,128 +65,166 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String _tierBlurb(HeroTier tier) {
     switch (tier) {
       case HeroTier.kids:
-        return 'Epic first steps! Build, snap, launch, and discover everyday magic.';
+        return 'Snap, build, launch. Epic first discoveries.';
       case HeroTier.teens:
-        return 'Hands-on grit! Prototype circuitry, code gizmos, and hot-rod your gear.';
+        return 'Hands-on grit! Prototype circuitry, code gizmos, hot-rod gear.';
       case HeroTier.adult:
-        return 'Pro-grade fabrication, precision mechanics, restoration, and heavy power.';
+        return 'Pro-grade fabrication, precision mechanics, heavy power.';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 12),
-              Text(
-                'CHOOSE YOUR\nHERO TIER!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Select your level to unlock tailored DIY missions & gear!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 24),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: HeroTier.values.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 16),
-                  itemBuilder: (context, index) {
-                    final tier = HeroTier.values[index];
-                    final isSelected = _selectedTier == tier;
-                    return _HeroTierCard(
+      appBar: const AppHeader(),
+      body: Column(
+        children: [
+          const HazardStrip(height: 10),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+              children: [
+                Text('CHOOSE YOUR\nHERO TIER',
+                    style: AppText.display(size: 30)),
+                const SizedBox(height: 8),
+                Text(
+                  'Pick your level to unlock missions made for you.',
+                  style: AppText.bodyMuted(),
+                ),
+                const SizedBox(height: 24),
+                for (final tier in HeroTier.values)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 18),
+                    child: _TierCard(
                       title: tier.title,
                       ageRange: tier.ageRangeLabel,
                       blurb: _tierBlurb(tier),
                       color: _tierColor(tier),
                       icon: _tierIcon(tier),
-                      isSelected: isSelected,
+                      selected: _selectedTier == tier,
                       onTap: () => setState(() => _selectedTier = tier),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: (_selectedTier != null && !_submitting) ? _confirmSelection : null,
-                child: _submitting
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text("LET'S GO! 🚀"),
-              ),
-            ],
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            decoration: const BoxDecoration(
+              color: AppColors.cream,
+              border: Border(top: AppTheme.border),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  BrutalButton(
+                    label: "Let's go",
+                    icon: Icons.arrow_forward,
+                    loading: _submitting,
+                    onPressed: (_selectedTier != null && !_submitting)
+                        ? _confirmSelection
+                        : null,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'WORKS OFFLINE. NO ACCOUNT REQUIRED.',
+                    style: AppText.tag(
+                        color: AppColors.muted, weight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _HeroTierCard extends StatelessWidget {
+class _TierCard extends StatelessWidget {
   final String title;
   final String ageRange;
   final String blurb;
   final Color color;
   final IconData icon;
-  final bool isSelected;
+  final bool selected;
   final VoidCallback onTap;
 
-  const _HeroTierCard({
+  const _TierCard({
     required this.title,
     required this.ageRange,
     required this.blurb,
     required this.color,
     required this.icon,
-    required this.isSelected,
+    required this.selected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: isSelected ? color : Theme.of(context).dividerColor,
-            width: isSelected ? 3 : 2,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: color,
-                child: Icon(icon, color: Colors.white),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('$title  •  $ageRange', style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 4),
-                    Text(blurb, style: Theme.of(context).textTheme.bodySmall),
-                  ],
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: '$title, $ageRange',
+      child: BrutalCard(
+        onTap: onTap,
+        color: color,
+        // The selected card "pops" with a bigger shadow.
+        shadowOffset: selected ? 8 : 4,
+        clipBehavior: Clip.hardEdge,
+        child: HalftoneBackground(
+          dotColor: AppColors.halftoneDot,
+          dotSpacing: 8,
+          dotRadius: 1.2,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CoverIconBox(icon: icon, size: 52),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(title.toUpperCase(),
+                                style: AppText.display(size: 20)),
+                            const SizedBox(height: 4),
+                            Text(ageRange.toUpperCase(),
+                                style: AppText.tag(size: 12)),
+                            const SizedBox(height: 8),
+                            Text(blurb, style: AppText.body(size: 14)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              if (isSelected) Icon(Icons.check_circle, color: color),
-            ],
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: selected ? AppColors.ink : AppColors.white,
+                      border: Border.fromBorderSide(AppTheme.tagBorder),
+                    ),
+                    child: selected
+                        ? const Icon(Icons.check,
+                            size: 20, color: AppColors.actionYellow)
+                        : null,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
