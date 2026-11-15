@@ -1,63 +1,81 @@
 // lib/widgets/category_tile.dart
-// A single "Explore Missions" grid tile (Home Repair, Woodcraft, etc.)
-// shown on the Home screen and used to jump into the Category screen
-// pre-filtered to that category.
+// Compact lab tile for the Home "Pick a lab" bento grid: flat category
+// color, halftone dots, icon box, black "4 MISSIONS" tag and the lab name.
 
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_theme.dart';
+import '../constants/category_style.dart';
+import 'brutal_card.dart';
+import 'halftone_background.dart';
+import 'mission_cover.dart';
 
 class CategoryTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
+  /// Full category name from SkillsData (e.g. "Electronics & Gadget Lab").
+  final String category;
+  final int missionCount;
   final VoidCallback onTap;
 
   const CategoryTile({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
+    required this.category,
+    required this.missionCount,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final outline = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.darkOutline
-        : AppColors.lightOutline;
-
-    return InkWell(
+    return BrutalCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.35),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: outline, width: 2.5),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 28, color: outline),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
+      color: CategoryStyle.color(category),
+      clipBehavior: Clip.hardEdge,
+      child: HalftoneBackground(
+        dotColor: AppColors.halftoneDot,
+        dotSpacing: 8,
+        dotRadius: 1.2,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CoverIconBox(icon: CategoryStyle.icon(category), size: 40),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.ink,
+                            border: Border.fromBorderSide(AppTheme.tagBorder),
+                          ),
+                          child: Text(
+                            '$missionCount MISSIONS',
+                            style: AppText.tag(color: AppColors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              // One line that scales down instead of breaking a word in half.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  CategoryStyle.shortLabel(category).toUpperCase(),
+                  style: AppText.display(size: 16),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
