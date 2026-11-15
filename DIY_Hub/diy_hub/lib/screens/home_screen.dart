@@ -2,6 +2,7 @@
 // The main shell: black header, the 5-tab bottom nav (HOME, LABS, STATS,
 // SAVED, CONFIG) and the Home tab itself.
 //
+
 // Home tab (top to bottom): headline + stat line, search + random-mission
 // dice, "Pick a lab" bento grid, Featured Today, Continue (only if a mission
 // is in progress), "Start here" row for the user's Hero Tier.
