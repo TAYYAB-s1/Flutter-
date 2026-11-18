@@ -2,7 +2,6 @@
 // The main shell: black header, the 5-tab bottom nav (HOME, LABS, STATS,
 // SAVED, CONFIG) and the Home tab itself.
 //
-
 // Home tab (top to bottom): headline + stat line, search + random-mission
 // dice, "Pick a lab" bento grid, Featured Today, Continue (only if a mission
 // is in progress), "Start here" row for the user's Hero Tier.
@@ -20,6 +19,7 @@ import '../models/progress_model.dart';
 import '../models/skill_model.dart';
 import '../models/user_stats_model.dart';
 import '../services/progress_service.dart';
+import '../services/tab_request.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/app_header.dart';
 import '../widgets/block_progress_bar.dart';
@@ -63,11 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    TabRequest.notifier.addListener(_onTabRequest);
     _loadData();
   }
 
   @override
   void dispose() {
+    TabRequest.notifier.removeListener(_onTabRequest);
     _searchController.dispose();
     _startHereController.dispose();
     super.dispose();
@@ -81,6 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
       _stats = stats;
       _allProgress = progress;
     });
+  }
+
+  /// A pushed screen (e.g. Mission Detail) asked for a bottom-nav tab.
+  void _onTabRequest() {
+    final tab = TabRequest.notifier.value;
+    if (tab == null) return;
+    TabRequest.notifier.value = null;
+    if (mounted) setState(() => _navIndex = tab);
   }
 
   // ── Actions ──────────────────────────────────────────────────────
