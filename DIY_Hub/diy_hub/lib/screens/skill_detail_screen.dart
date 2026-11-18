@@ -1,18 +1,39 @@
 // lib/screens/skill_detail_screen.dart
-// "PROJECT DETAIL" — shown when a mission card is tapped from Home or
-// Categories. Displays mission info, required materials (Hero Gear), and
-// the ordered list of episodes, each locked until the previous is done.
+// MISSION DETAIL: opened when a mission card is tapped.
+// Top to bottom: back button + breadcrumb, huge title, rank and tier tags,
+// the black STAGE panel (status, description, main action, save), Mission
+// Specs and "More in this lab", Hero Gear, Episodes, mentor tip, and a sticky
+// Start / Resume / Replay button above the bottom nav (LABS highlighted).
+//
+// Logic is unchanged from the old version: episodes unlock one by one, the
+// current episode is the first not-yet-completed one, and finishing every
+// episode (in the Player) awards the XP.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_theme.dart';
+import '../constants/category_style.dart';
 import '../constants/skills_data.dart';
-import '../models/lesson_model.dart';
 import '../models/progress_model.dart';
 import '../models/skill_model.dart';
 import '../services/progress_service.dart';
+import '../services/tab_request.dart';
+import '../widgets/app_bottom_nav.dart';
+import '../widgets/brutal_button.dart';
+import '../widgets/brutal_card.dart';
 import '../widgets/episode_list_item.dart';
-import '../widgets/halftone_background.dart';
+import '../widgets/hazard_strip.dart';
 import '../widgets/hero_gear_checklist.dart';
+import '../widgets/key_value_row.dart';
+import '../widgets/mission_cover.dart';
+import '../widgets/rank_badge.dart';
+import '../widgets/stage_grid.dart';
+import '../widgets/stage_header.dart';
+import '../widgets/status_pill.dart';
+import '../widgets/sticker_label.dart';
+import '../widgets/tech_tag.dart';
+import 'lesson_screen.dart';
 
 class SkillDetailScreen extends StatefulWidget {
   final SkillModel skill;
@@ -27,6 +48,15 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   final _progressService = ProgressService();
   ProgressModel? _progress;
   bool _loading = true;
+
+  static const _tips = [
+    'Measure twice, cut once. Every maker\'s golden rule!',
+    'Clamp your pieces firmly before cutting. Two clamps are twice as heroic as one!',
+    'Keep your workspace tidy. A clear bench means a clear mind.',
+    'Double-check polarity before powering anything on.',
+    'Safety goggles are not optional. They are part of the uniform!',
+    'Ask an adult for help with anything sharp, hot, or electric.',
+  ];
 
   @override
   void initState() {
@@ -48,331 +78,492 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     _load();
   }
 
-  /// Determines the visual state of episode [index] based on saved progress:
-  /// completed episodes are checked off, the first not-yet-completed episode
-  /// is the "current objective", and everything after that is locked.
-  EpisodeState _stateFor(int index) {
-    final completedIds = _progress?.completedLessonIds ?? {};
-    final lessons = widget.skill.lessons;
-    final lesson = lessons[index];
+  // ── Progress helpers ─────────────────────────────────────────────
 
-    if (completedIds.contains(lesson.id)) return EpisodeState.completed;
+  Set<String> get _completedIds => _progress?.completedLessonIds ?? <String>{};
 
-    final firstIncompleteIndex =
-        lessons.indexWhere((l) => !completedIds.contains(l.id));
-    if (index == firstIncompleteIndex) return EpisodeState.current;
-    return EpisodeState.locked;
+  /// How many of THIS mission's episodes are done.
+  int get _doneCount {
+    var count = 0;
+    for (final lesson in widget.skill.lessons) {
+      if (_completedIds.contains(lesson.id)) count++;
+    }
+    return count;
   }
 
-  void _openLesson(LessonModel lesson) {
-    // TODO(Phase 3C): replace with Navigator.push to LessonScreen.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text('${lesson.title} — Lesson screen coming in Phase 3C')),
+  MissionStatus get _status => missionStatusFor(
+        completedEpisodes: _doneCount,
+        totalEpisodes: widget.skill.lessons.length,
+      );
+
+  String get _statusText {
+    switch (_status) {
+      case MissionStatus.notStarted:
+        return 'NOT STARTED';
+      case MissionStatus.inProgress:
+        return 'IN PROGRESS $_doneCount/${widget.skill.lessons.length}';
+      case MissionStatus.completed:
+        return 'COMPLETED';
+    }
+  }
+
+  String get _cursorLine {
+    switch (_status) {
+      case MissionStatus.notStarted:
+        return 'READY TO BUILD_';
+      case MissionStatus.inProgress:
+        return 'KEEP BUILDING_';
+      case MissionStatus.completed:
+        return 'MISSION CLEARED_';
+    }
+  }
+
+  String get _primaryLabel {
+    switch (_status) {
+      case MissionStatus.notStarted:
+        return 'Start mission';
+      case MissionStatus.inProgress:
+        return 'Resume mission';
+      case MissionStatus.completed:
+        return 'Replay mission';
+    }
+  }
+
+  /// Index of the first episode that is not done yet (0 when all are done,
+  /// so "Replay" starts from the beginning).
+  int get _nextLessonIndex {
+    final index =
+        widget.skill.lessons.indexWhere((l) => !_completedIds.contains(l.id));
+    return index == -1 ? 0 : index;
+  }
+
+  /// Completed episodes stay checked, the first unfinished one is the current
+  /// objective, and everything after it is locked.
+  EpisodeState _stateFor(int index) {
+    final lessons = widget.skill.lessons;
+    if (_completedIds.contains(lessons[index].id))
+      return EpisodeState.completed;
+    final firstIncomplete =
+        lessons.indexWhere((l) => !_completedIds.contains(l.id));
+    return index == firstIncomplete
+        ? EpisodeState.current
+        : EpisodeState.locked;
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────
+
+  Future<void> _openLesson(int lessonIndex) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            LessonScreen(skill: widget.skill, lessonIndex: lessonIndex),
+      ),
+    );
+    // Reload progress in case an episode was completed (or the mission finished).
+    if (result == true) _load();
+  }
+
+  void _openOther(SkillModel other) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => SkillDetailScreen(skill: other)),
     );
   }
+
+  /// Bottom nav: go back to the Home shell and show the chosen tab.
+  void _goToTab(int index) {
+    TabRequest.go(index);
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  // ── Build ────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     final skill = widget.skill;
+    final others = SkillsData.byCategory(skill.category)
+        .where((s) => s.id != skill.id)
+        .take(3)
+        .toList();
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark
+          .copyWith(statusBarColor: Colors.transparent),
+      child: Scaffold(
+        body: SafeArea(
+          bottom: false,
+          child: _loading
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppColors.ink))
+              : ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                  children: [
+                    _buildTopRow(skill),
+                    const SizedBox(height: 20),
+                    Text(skill.title.toUpperCase(),
+                        style: AppText.display(size: 32)),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        RankBadge(rank: skill.difficultyRank),
+                        TechTag.tier(skill.minHeroTier),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    _buildStage(skill),
+                    const SizedBox(height: 28),
+                    _buildInfoPanels(skill, others),
+                    const SizedBox(height: 28),
+                    HeroGearChecklist(
+                      materials: skill.materialsList,
+                      accentColor: skill.accentColor,
+                    ),
+                    const SizedBox(height: 28),
+                    _buildEpisodes(skill),
+                    const SizedBox(height: 14),
+                    _buildMentorTip(skill),
+                    const SizedBox(height: 28),
+                    const HazardStrip(),
+                  ],
+                ),
+        ),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+              decoration: const BoxDecoration(
+                color: AppColors.cream,
+                border: Border(top: AppTheme.border),
+              ),
+              child: BrutalButton(
+                label: _primaryLabel,
+                icon: Icons.arrow_forward,
+                onPressed:
+                    _loading ? null : () => _openLesson(_nextLessonIndex),
+              ),
+            ),
+            AppBottomNav(currentIndex: 1, onTap: _goToTab),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopRow(SkillModel skill) {
+    return Row(
+      children: [
+        BrutalCard(
+          onTap: () => Navigator.of(context).pop(),
+          shadowOffset: 3,
+          child: const SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(Icons.arrow_back, color: AppColors.ink),
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Text(
+            'HOME / ${CategoryStyle.shortLabel(skill.category).toUpperCase()} / ${skill.title.toUpperCase()}',
+            style: AppText.tag(
+                size: 12, color: AppColors.muted, weight: FontWeight.w400),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// The black stage panel.
+  Widget _buildStage(SkillModel skill) {
     final isFavorite = _progress?.isFavorite ?? false;
-    final missionNumber =
-        SkillsData.all.indexWhere((s) => s.id == skill.id) + 1;
-    final firstLesson = skill.lessons.isNotEmpty ? skill.lessons.first : null;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PROJECT DETAIL'),
-        actions: [
-          IconButton(
-            icon: Icon(isFavorite ? Icons.bookmark : Icons.bookmark_border),
-            color: isFavorite ? AppColors.comicYellow : null,
-            onPressed: _toggleFavorite,
-          ),
-        ],
-      ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _HeroBanner(skill: skill, missionNumber: missionNumber),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    const _Tag(label: 'FIELD BLUEPRINT'),
-                    const Spacer(),
-                    _RankBadge(rank: skill.difficultyRank),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'MISSION #$missionNumber: ${skill.title.toUpperCase()}',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(skill.description,
-                    style: Theme.of(context).textTheme.bodyLarge),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _InfoChip(
-                        icon: Icons.groups, label: skill.minHeroTier.title),
-                    _InfoChip(
-                        icon: Icons.schedule,
-                        label: '${skill.estimatedMinutes} mins'),
-                    _InfoChip(icon: Icons.bolt, label: '+${skill.xpReward} XP'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                HeroGearChecklist(
-                    materials: skill.materialsList,
-                    accentColor: skill.accentColor),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: skill.accentColor,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: firstLesson == null
-                        ? null
-                        : () => _openLesson(firstLesson),
-                    child: const Text('⚡ START MISSION!'),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('MISSION EPISODES',
-                        style: Theme.of(context).textTheme.titleLarge),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(8),
-                        border:
-                            Border.all(color: skill.accentColor, width: 1.5),
-                      ),
-                      child: Text(
-                        '${skill.lessons.length} CHAPTERS',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ...List.generate(skill.lessons.length, (i) {
-                  final lesson = skill.lessons[i];
-                  return EpisodeListItem(
-                    number: i + 1,
-                    title: lesson.title,
-                    subtitle: lesson.steps.isNotEmpty ? lesson.steps.first : '',
-                    state: _stateFor(i),
-                    accentColor: skill.accentColor,
-                    onTap: () => _openLesson(lesson),
-                  );
-                }),
-                const SizedBox(height: 4),
-                _MentorTip(skillId: skill.id),
-              ],
-            ),
-    );
-  }
-}
-
-class _HeroBanner extends StatelessWidget {
-  final SkillModel skill;
-  final int missionNumber;
-
-  const _HeroBanner({required this.skill, required this.missionNumber});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: SizedBox(
-        height: 160,
-        width: double.infinity,
-        child: HalftoneBackground(
-          dotColor: Colors.black.withValues(alpha: 0.08),
-          child: Container(
-            color: skill.accentColor.withValues(alpha: 0.45),
-            child: Stack(
-              children: [
-                Center(
-                    child: Icon(skill.icon, size: 72, color: Colors.black87)),
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '⚡ LAB DISCOVERY #$missionNumber',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Tag extends StatelessWidget {
-  final String label;
-
-  const _Tag({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-          color: Colors.black87, borderRadius: BorderRadius.circular(6)),
-      child: Text(
-        label,
-        style: const TextStyle(
-            color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
-      ),
-    );
-  }
-}
-
-class _RankBadge extends StatelessWidget {
-  final DifficultyRank rank;
-
-  const _RankBadge({required this.rank});
-
-  Color _color() {
-    switch (rank) {
-      case DifficultyRank.novice:
-        return AppColors.rankNovice;
-      case DifficultyRank.cadet:
-        return AppColors.rankCadet;
-      case DifficultyRank.master:
-        return AppColors.rankMaster;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: _color(),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.black87, width: 1.5),
-      ),
-      child: Text(
-        '${'★' * rank.starCount} RANK: ${rank.label.toUpperCase()}',
-        style: const TextStyle(
-            color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
-      ),
-    );
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _InfoChip({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark ? AppColors.darkOutline : AppColors.lightOutline,
-          width: 2,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    return BrutalCard(
+      color: AppColors.ink,
+      shadowOffset: 6,
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(icon, size: 14),
-          const SizedBox(width: 6),
-          Text(label,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(fontWeight: FontWeight.w700)),
+          StageHeader(
+            label: '${CategoryStyle.shortLabel(skill.category)} · $_statusText',
+            color: skill.accentColor,
+            leadingIcon: CategoryStyle.icon(skill.category),
+          ),
+          StageGrid(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _cursorLine,
+                          style:
+                              AppText.tag(size: 16, color: skill.accentColor),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          skill.description,
+                          style: AppText.body(size: 14, color: AppColors.white),
+                          maxLines: 4,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 16),
+                        BrutalButton(
+                          label: _primaryLabel,
+                          icon: Icons.arrow_forward,
+                          shadowColor: skill.accentColor,
+                          onPressed: () => _openLesson(_nextLessonIndex),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    width: 88,
+                    height: 88,
+                    decoration: BoxDecoration(
+                      color: skill.accentColor,
+                      border: Border.all(color: AppColors.white, width: 2),
+                    ),
+                    child:
+                        Center(child: CoverIconBox(icon: skill.icon, size: 56)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: const BoxDecoration(
+              border: Border(top: BorderSide(color: AppColors.white, width: 2)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${skill.estimatedMinutes} MIN · ${skill.lessons.length} EPISODES · +${skill.xpReward} XP',
+                    style: AppText.tag(size: 12, color: AppColors.white),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                BrutalButton(
+                  label: isFavorite ? 'Saved' : 'Save',
+                  icon: isFavorite ? Icons.bookmark : Icons.bookmark_border,
+                  iconAfterLabel: false,
+                  style: BrutalButtonStyle.secondary,
+                  expand: false,
+                  height: 44,
+                  fontSize: 13,
+                  shadowColor: skill.accentColor,
+                  onPressed: _toggleFavorite,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
-}
 
-class _MentorTip extends StatelessWidget {
-  final String skillId;
+  /// Mission Specs and "More in this lab": side by side on wide screens,
+  /// stacked on phones so the dotted rows stay readable.
+  Widget _buildInfoPanels(SkillModel skill, List<SkillModel> others) {
+    final specs = _buildSpecs(skill);
+    final more = others.isEmpty ? null : _buildMore(skill, others);
 
-  const _MentorTip({required this.skillId});
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (more == null) return specs;
+        if (constraints.maxWidth >= 560) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: specs),
+              const SizedBox(width: 16),
+              Expanded(child: more),
+            ],
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [specs, const SizedBox(height: 18), more],
+        );
+      },
+    );
+  }
 
-  static const _tips = [
-    'Measure twice, cut once — every maker\'s golden rule!',
-    'Clamp your pieces firmly before cutting. Two clamps are twice as heroic as one!',
-    'Keep your workspace tidy — a clear bench means a clear mind.',
-    'Double-check polarity before powering anything on.',
-    'Safety goggles aren\'t optional gear — they\'re part of the uniform!',
-    'Ask an adult for help with anything sharp, hot, or electric.',
-  ];
+  Widget _buildSpecs(SkillModel skill) {
+    final rank = skill.difficultyRank;
 
-  @override
-  Widget build(BuildContext context) {
-    final tip = _tips[skillId.hashCode.abs() % _tips.length];
-    return Container(
+    return BrutalCard(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.comicYellow.withValues(alpha: 0.22),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.comicYellow, width: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const StickerLabel(text: 'Mission specs', fontSize: 12),
+          const SizedBox(height: 10),
+          KeyValueRow(
+              label: 'Category',
+              value: CategoryStyle.shortLabel(skill.category)),
+          KeyValueRow(label: 'Tier', value: skill.minHeroTier.title),
+          KeyValueRow(
+              label: 'Difficulty',
+              value: '${'★' * rank.starCount} ${rank.label}'),
+          KeyValueRow(label: 'Time', value: '${skill.estimatedMinutes} min'),
+          KeyValueRow(label: 'Episodes', value: '${skill.lessons.length}'),
+          KeyValueRow(
+              label: 'Reward', value: '+${skill.xpReward} XP', highlight: true),
+        ],
       ),
+    );
+  }
+
+  Widget _buildMore(SkillModel skill, List<SkillModel> others) {
+    return BrutalCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          StickerLabel(
+            text: 'More in ${CategoryStyle.shortLabel(skill.category)}',
+            color: skill.accentColor,
+            fontSize: 12,
+          ),
+          const SizedBox(height: 8),
+          for (final other in others)
+            _MoreRow(skill: other, onTap: () => _openOther(other)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEpisodes(SkillModel skill) {
+    final total = skill.lessons.length;
+    final percent = total == 0 ? 0 : ((_doneCount / total) * 100).round();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const StickerLabel(text: 'Episodes'),
+            const Spacer(),
+            Text(
+              '$percent% COMPLETE',
+              style: AppText.tag(size: 12, color: AppColors.muted),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        for (var i = 0; i < total; i++)
+          EpisodeListItem(
+            number: i + 1,
+            title: skill.lessons[i].title,
+            subtitle: skill.lessons[i].steps.isNotEmpty
+                ? skill.lessons[i].steps.first
+                : '',
+            state: _stateFor(i),
+            accentColor: skill.accentColor,
+            onTap: () => _openLesson(i),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildMentorTip(SkillModel skill) {
+    final tip = _tips[skill.id.hashCode.abs() % _tips.length];
+
+    return BrutalCard(
+      color: Color.alphaBlend(
+          skill.accentColor.withValues(alpha: 0.2), AppColors.white),
+      padding: const EdgeInsets.all(14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.smart_toy, color: AppColors.comicOrange),
-          const SizedBox(width: 10),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              border: Border.fromBorderSide(AppTheme.tagBorder),
+            ),
+            child: const Icon(Icons.lightbulb_outline,
+                size: 22, color: AppColors.ink),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'LAB ROBOT MENTOR TIP',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(fontWeight: FontWeight.w900),
-                ),
+                Text('MENTOR TIP', style: AppText.tag(size: 12)),
                 const SizedBox(height: 4),
-                Text('"$tip"', style: Theme.of(context).textTheme.bodyMedium),
+                Text(tip, style: AppText.body(size: 14)),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// One row in "More in this lab": small colored cover, title, rank and time.
+class _MoreRow extends StatelessWidget {
+  final SkillModel skill;
+  final VoidCallback onTap;
+
+  const _MoreRow({required this.skill, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: skill.accentColor,
+                border: Border.fromBorderSide(AppTheme.tagBorder),
+              ),
+              child: Icon(skill.icon, size: 24, color: AppColors.ink),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    skill.title.toUpperCase(),
+                    style: AppText.display(size: 14, height: 1.15),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${skill.difficultyRank.label} · ${skill.estimatedMinutes} min',
+                    style: AppText.caption(),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: AppColors.ink),
+          ],
+        ),
       ),
     );
   }
