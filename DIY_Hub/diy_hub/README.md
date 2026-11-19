@@ -31,12 +31,12 @@ Instead of plain lessons, DIYHub frames everything as **Missions** with **XP rew
 
 ## 🧱 Tech Stack
 
-| Layer | Choice |
-|---|---|
-| Framework | Flutter (Dart) |
-| State Management | `setState` only — no Provider/Riverpod/Bloc |
-| Local Persistence | `shared_preferences` |
-| Data Source | Static local dataset (`skills_data.dart`) |
+| Layer             | Choice                                      |
+| ----------------- | ------------------------------------------- |
+| Framework         | Flutter (Dart)                              |
+| State Management  | `setState` only — no Provider/Riverpod/Bloc |
+| Local Persistence | `shared_preferences`                        |
+| Data Source       | Static local dataset (`skills_data.dart`)   |
 
 ---
 
@@ -87,6 +87,7 @@ lib/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.3.0 or higher)
 - Android Studio / VS Code with the Flutter extension
 - An emulator or physical device
@@ -121,11 +122,11 @@ DIYHub needs **no special device permissions** — no camera, storage, or intern
 - Every mission has an **XP reward**, granted once all of its episodes are completed.
 - Total XP determines your **Rank**:
 
-| Rank | XP Range |
-|---|---|
-| Novice | 0 – 499 |
-| Cadet | 500 – 1,499 |
-| Master | 1,500+ |
+| Rank   | XP Range    |
+| ------ | ----------- |
+| Novice | 0 – 499     |
+| Cadet  | 500 – 1,499 |
+| Master | 1,500+      |
 
 - Progress, favorites, XP, and theme preference are all saved locally via `shared_preferences` and persist between app launches.
 
@@ -139,7 +140,6 @@ DIYHub needs **no special device permissions** — no camera, storage, or intern
 - [x] **Phase 4** — Progress & Favorites screens
 - [x] **Phase 5** — Settings screen (theme toggle, Hero Tier change, data reset)
 - [x] **Phase 6** — Polish: app icon, empty/loading states, permissions review
-
 
 ---
 
