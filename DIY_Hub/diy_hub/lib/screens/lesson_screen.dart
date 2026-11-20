@@ -1,14 +1,26 @@
 // lib/screens/lesson_screen.dart
-// A single Mission Episode — walks the user through its steps one at a
-// time. Completing the final step of the final episode triggers XP award
-// and a "Mission Complete!" celebration (with a Rank Up variant).
+// MISSION PLAYER: one episode, one step at a time, on a black stage.
+//   - Top bar in the lab's color: close button + "EPISODE 2 OF 4 · TITLE"
+//   - "STEP 2 OF 3_" label, a blocky step bar, and the instruction text
+//   - Bottom bar: PREVIOUS and NEXT (COMPLETE EPISODE on the last step)
+//
+// Logic is unchanged: XP is awarded only when the whole mission is finished
+// (inside ProgressService.markLessonComplete). Finishing a non-final episode
+// moves straight to the next episode; finishing the final one shows the
+// Mission Complete dialog and then returns to Mission Detail.
+// Black here is a fixed design accent, not a dark theme.
 
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_theme.dart';
 import '../models/skill_model.dart';
 import '../services/progress_service.dart';
-import '../widgets/comic_burst_badge.dart';
-import '../widgets/halftone_background.dart';
+import '../widgets/brutal_button.dart';
+import '../widgets/mission_complete_dialog.dart';
+import '../widgets/segmented_step_bar.dart';
+import '../widgets/stage_grid.dart';
 
 class LessonScreen extends StatefulWidget {
   final SkillModel skill;
@@ -26,123 +38,35 @@ class _LessonScreenState extends State<LessonScreen> {
   int _stepIndex = 0;
   bool _submitting = false;
 
-  @override
-  Widget build(BuildContext context) {
-    final skill = widget.skill;
-    final lesson = skill.lessons[widget.lessonIndex];
-    final steps = lesson.steps;
-    final isLastStep = _stepIndex == steps.length - 1;
-    final isFirstStep = _stepIndex == 0;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  // Blinking "_" after the step label.
+  bool _cursorOn = true;
+  Timer? _cursorTimer;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            'EPISODE ${widget.lessonIndex + 1} OF ${skill.lessons.length}'),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: SizedBox(
-                  height: 130,
-                  width: double.infinity,
-                  child: HalftoneBackground(
-                    dotColor: Colors.black.withValues(alpha: 0.08),
-                    child: Container(
-                      color: skill.accentColor.withValues(alpha: 0.4),
-                      child: Center(
-                          child: Icon(skill.icon,
-                              size: 52, color: Colors.black87)),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'STEP ${_stepIndex + 1} OF ${steps.length}',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: skill.accentColor,
-                    ),
-              ),
-              const SizedBox(height: 6),
-              Text(lesson.title, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isDark
-                            ? AppColors.darkOutline
-                            : AppColors.lightOutline,
-                        width: 2.5,
-                      ),
-                    ),
-                    child: Text(steps[_stepIndex],
-                        style: Theme.of(context).textTheme.bodyLarge),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: isFirstStep
-                          ? null
-                          : () => setState(() => _stepIndex--),
-                      child: const Text('← PREVIOUS'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: skill.accentColor),
-                      onPressed: _submitting
-                          ? null
-                          : () {
-                              if (isLastStep) {
-                                _completeEpisode();
-                              } else {
-                                setState(() => _stepIndex++);
-                              }
-                            },
-                      child: _submitting
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text(isLastStep ? 'COMPLETE EPISODE ✓' : 'NEXT →'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _cursorTimer = Timer.periodic(const Duration(milliseconds: 550), (_) {
+      if (mounted) setState(() => _cursorOn = !_cursorOn);
+    });
+  }
+
+  @override
+  void dispose() {
+    _cursorTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _completeEpisode() async {
+    if (_submitting) return;
     setState(() => _submitting = true);
 
     final skill = widget.skill;
     final lesson = skill.lessons[widget.lessonIndex];
+    final isFinalEpisode = widget.lessonIndex == skill.lessons.length - 1;
+
+    // A mission that was already finished earns no XP again (replay).
+    final before = await _progressService.getProgress(skill.id);
+    final alreadyCompleted = before.isCompleted;
 
     final rankedUp = await _progressService.markLessonComplete(
       skillId: skill.id,
@@ -154,72 +78,203 @@ class _LessonScreenState extends State<LessonScreen> {
     if (!mounted) return;
     setState(() => _submitting = false);
 
-    final isFinalEpisode = widget.lessonIndex == skill.lessons.length - 1;
-
-    if (isFinalEpisode) {
-      await _showMissionCompleteDialog(rankedUp);
-      if (!mounted) return;
-      Navigator.of(context).pop(true); // back to Skill Detail, signal a refresh
-    } else {
+    if (!isFinalEpisode) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) =>
               LessonScreen(skill: skill, lessonIndex: widget.lessonIndex + 1),
         ),
       );
+      return;
     }
+
+    final xpEarned = alreadyCompleted ? 0 : skill.xpReward;
+    DifficultyRank? previousRank;
+    DifficultyRank? newRank;
+    if (rankedUp) {
+      final stats = await _progressService.getUserStats();
+      newRank = stats.currentRank;
+      previousRank =
+          stats.copyWith(totalXp: stats.totalXp - xpEarned).currentRank;
+    }
+
+    if (!mounted) return;
+    await showMissionCompleteDialog(
+      context,
+      skill: skill,
+      xpEarned: xpEarned,
+      previousRank: previousRank,
+      newRank: newRank,
+    );
+    if (!mounted) return;
+    Navigator.of(context).pop(true); // back to Mission Detail, signal a refresh
   }
 
-  Future<void> _showMissionCompleteDialog(bool rankedUp) async {
+  @override
+  Widget build(BuildContext context) {
     final skill = widget.skill;
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ComicBurstBadge(
-                text: rankedUp ? 'RANK\nUP!' : 'DONE!',
-                size: 90,
-                color: rankedUp ? AppColors.comicRed : AppColors.success,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'MISSION COMPLETE!',
-                style: Theme.of(context).textTheme.displayMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'You earned +${skill.xpReward} XP for "${skill.title}"',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              if (rankedUp) ...[
-                const SizedBox(height: 8),
-                Text(
-                  '🎉 You leveled up to a new Rank!',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.comicRed,
+    final lesson = skill.lessons[widget.lessonIndex];
+    final steps =
+        lesson.steps.isEmpty ? const ['Complete this episode.'] : lesson.steps;
+    final accent = skill.accentColor;
+    final isFirstStep = _stepIndex == 0;
+    final isLastStep = _stepIndex == steps.length - 1;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark
+          .copyWith(statusBarColor: Colors.transparent),
+      child: Scaffold(
+        backgroundColor: AppColors.ink,
+        body: Column(
+          children: [
+            _buildTopBar(skill, lesson.title, accent),
+            Expanded(
+              child: StageGrid(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          text: 'STEP ${_stepIndex + 1} OF ${steps.length}',
+                          children: [
+                            TextSpan(
+                              text: '_',
+                              style: TextStyle(
+                                color: _cursorOn ? accent : Colors.transparent,
+                              ),
+                            ),
+                          ],
+                        ),
+                        style: AppText.tag(size: 14, color: accent),
                       ),
+                      const SizedBox(height: 12),
+                      SegmentedStepBar(
+                        total: steps.length,
+                        current: _stepIndex + 1,
+                        currentColor: accent,
+                      ),
+                      const SizedBox(height: 28),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppColors.ink,
+                          border: Border.all(
+                              color: AppColors.white,
+                              width: AppTheme.borderWidth),
+                          boxShadow: [
+                            BoxShadow(
+                                color: accent,
+                                offset: const Offset(6, 6),
+                                blurRadius: 0),
+                          ],
+                        ),
+                        child: Text(
+                          steps[_stepIndex],
+                          style: AppText.body(
+                            size: 22,
+                            color: AppColors.white,
+                            weight: FontWeight.w600,
+                          ).copyWith(height: 1.4),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('AWESOME!'),
+              ),
+            ),
+            _buildBottomBar(accent, isFirstStep, isLastStep),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar(SkillModel skill, String episodeTitle, Color accent) {
+    return Container(
+      color: accent,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 16, 12),
+          child: Row(
+            children: [
+              Tooltip(
+                message: 'Close',
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      border: Border.fromBorderSide(AppTheme.tagBorder),
+                    ),
+                    child:
+                        const Icon(Icons.close, size: 26, color: AppColors.ink),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'EPISODE ${widget.lessonIndex + 1} OF ${skill.lessons.length} · ${episodeTitle.toUpperCase()}',
+                  style: AppText.display(size: 15, height: 1.2),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomBar(Color accent, bool isFirstStep, bool isLastStep) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      decoration: const BoxDecoration(
+        color: AppColors.ink,
+        border: Border(top: BorderSide(color: AppColors.white, width: 2)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: BrutalButton(
+                label: 'Back',
+                icon: Icons.arrow_back,
+                iconAfterLabel: false,
+                style: BrutalButtonStyle.secondary,
+                shadowColor: accent,
+                fontSize: 14,
+                onPressed: (isFirstStep || _submitting)
+                    ? null
+                    : () => setState(() => _stepIndex--),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 3,
+              child: BrutalButton(
+                label: isLastStep ? 'Complete episode' : 'Next',
+                icon: isLastStep ? Icons.check : Icons.arrow_forward,
+                shadowColor: accent,
+                fontSize: 14,
+                loading: _submitting,
+                onPressed: _submitting
+                    ? null
+                    : (isLastStep
+                        ? _completeEpisode
+                        : () => setState(() => _stepIndex++)),
+              ),
+            ),
+          ],
         ),
       ),
     );
