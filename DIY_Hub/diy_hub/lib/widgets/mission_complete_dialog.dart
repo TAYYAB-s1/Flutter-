@@ -46,3 +46,107 @@ class _MissionCompleteDialog extends StatelessWidget {
     required this.previousRank,
     required this.newRank,
   });
+
+  bool get _rankedUp =>
+      previousRank != null && newRank != null && previousRank != newRank;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      insetPadding: const EdgeInsets.all(24),
+      child: BrutalCard(
+        shadowOffset: 8,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: StickerLabel(
+                text: 'Mission complete!',
+                color: AppColors.success,
+                icon: Icons.check,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(skill.title.toUpperCase(), style: AppText.display(size: 22)),
+            const SizedBox(height: 16),
+            if (xpEarned > 0)
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.bolt, size: 40, color: AppColors.ink),
+                    Text('+$xpEarned XP', style: AppText.display(size: 44)),
+                  ],
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.cream,
+                  border: Border.fromBorderSide(AppTheme.tagBorder),
+                ),
+                child: Text(
+                  'ALREADY EARNED. NO NEW XP THIS TIME.',
+                  style: AppText.tag(size: 12, color: AppColors.muted),
+                ),
+              ),
+            if (_rankedUp) ...[
+              const SizedBox(height: 18),
+              BrutalCard(
+                color: AppColors.categoryCookingLab,
+                shadowOffset: 4,
+                clipBehavior: Clip.hardEdge,
+                child: HalftoneBackground(
+                  dotColor: AppColors.halftoneDot,
+                  dotSpacing: 8,
+                  dotRadius: 1.2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      children: [
+                        Text('RANK UP!', style: AppText.display(size: 22)),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              previousRank!.label.toUpperCase(),
+                              style: AppText.display(size: 16),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Icon(Icons.arrow_forward,
+                                  size: 22, color: AppColors.ink),
+                            ),
+                            Text(
+                              newRank!.label.toUpperCase(),
+                              style: AppText.display(size: 16),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            const SizedBox(height: 20),
+            BrutalButton(
+              label: 'Continue',
+              icon: Icons.arrow_forward,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
