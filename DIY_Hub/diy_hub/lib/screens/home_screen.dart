@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return FavoritesScreen(onOpenSkill: _openSkill);
       default:
-        return const SettingsScreen();
+        return SettingsScreen(onDataChanged: _loadData);
     }
   }
 
