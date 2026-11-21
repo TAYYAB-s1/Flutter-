@@ -1,19 +1,29 @@
 // lib/screens/progress_screen.dart
-// "Progress" tab — shows total XP, current rank with progress to the next
-// rank, missions still in progress, and a trophy case of completed ones.
-// Rendered as a tab body inside HomeScreen's shared Scaffold (no own AppBar).
+// The STATS tab: your rank card (XP and progress to the next rank), the
+// missions you have started, and a trophy case of finished missions.
+// Rendered as a tab body inside HomeScreen's shared Scaffold.
 
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_theme.dart';
+import '../constants/category_style.dart';
 import '../constants/skills_data.dart';
 import '../models/progress_model.dart';
 import '../models/skill_model.dart';
 import '../models/user_stats_model.dart';
 import '../services/progress_service.dart';
-import '../widgets/power_meter_bar.dart';
+import '../widgets/block_progress_bar.dart';
+import '../widgets/brutal_button.dart';
+import '../widgets/brutal_card.dart';
+import '../widgets/halftone_background.dart';
+import '../widgets/hazard_strip.dart';
+import '../widgets/mission_cover.dart';
+import '../widgets/sticker_label.dart';
+import '../widgets/xp_tag.dart';
 
 class ProgressScreen extends StatefulWidget {
-  final ValueChanged<SkillModel>? onOpenSkill;
+  /// Opens a mission. Awaited, so this tab can refresh when you come back.
+  final Future<void> Function(SkillModel)? onOpenSkill;
 
   const ProgressScreen({super.key, this.onOpenSkill});
 
@@ -44,26 +54,20 @@ class _ProgressScreenState extends State<ProgressScreen> {
     });
   }
 
-  Color _rankColor(DifficultyRank rank) {
-    switch (rank) {
-      case DifficultyRank.novice:
-        return AppColors.rankNovice;
-      case DifficultyRank.cadet:
-        return AppColors.rankCadet;
-      case DifficultyRank.master:
-        return AppColors.rankMaster;
-    }
+  Future<void> _open(SkillModel skill) async {
+    final open = widget.onOpenSkill;
+    if (open == null) return;
+    await open(skill);
+    if (mounted) _load();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading || _stats == null) {
-      return const Center(child: CircularProgressIndicator());
+    final stats = _stats;
+    if (_loading || stats == null) {
+      return const Center(
+          child: CircularProgressIndicator(color: AppColors.ink));
     }
-
-    final stats = _stats!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final outline = isDark ? AppColors.darkOutline : AppColors.lightOutline;
 
     final inProgress = <SkillModel>[];
     final completed = <SkillModel>[];
@@ -78,232 +82,403 @@ class _ProgressScreenState extends State<ProgressScreen> {
     }
 
     return RefreshIndicator(
+      color: AppColors.ink,
       onRefresh: _load,
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
         children: [
-          // ── Rank / XP header card ────────────────────────────────
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: _rankColor(stats.currentRank),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Colors.black87, width: 2.5),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.emoji_events,
-                        color: Colors.white, size: 28),
-                    const SizedBox(width: 10),
-                    Text(
-                      'RANK: ${stats.currentRank.label.toUpperCase()}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '⚡ ${stats.totalXp} Total XP  •  ${stats.heroTier.title}',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13),
-                ),
-                const SizedBox(height: 14),
-                if (stats.xpToNextRank != null) ...[
-                  Text(
-                    '${stats.xpToNextRank} XP TO NEXT RANK',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12),
-                  ),
-                  const SizedBox(height: 6),
-                  PowerMeterBar(
-                    percent: _rankProgressPercent(stats),
-                    fillColor: Colors.white,
-                    showLabel: false,
-                  ),
-                ] else
-                  const Text(
-                    '🏆 Maximum Rank Achieved!',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w900),
-                  ),
-              ],
-            ),
+          Text('PROGRESS', style: AppText.display(size: 30)),
+          const SizedBox(height: 8),
+          Text(
+            'LEVEL UP BY FINISHING MISSIONS',
+            style: AppText.tag(size: 12, color: AppColors.muted),
           ),
-
-          const SizedBox(height: 24),
-
-          // ── In Progress ──────────────────────────────────────────
-          Text('IN PROGRESS', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
+          _RankCard(stats: stats),
+          const SizedBox(height: 28),
+          _SectionHeader(
+              label: 'In progress', trailing: '${inProgress.length} ACTIVE'),
+          const SizedBox(height: 14),
           if (inProgress.isEmpty)
-            _EmptyRow(
+            const _EmptyNote(
                 text:
-                    'No missions in progress. Start one from the Categories tab!')
+                    'Nothing in progress yet. Pick a lab and start a mission!')
           else
-            ...inProgress.map((skill) {
-              final progress = _allProgress[skill.id]!;
-              final percent = progress.progressPercent(skill.lessons.length);
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => widget.onOpenSkill?.call(skill),
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: outline, width: 2),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(skill.icon,
-                                color: skill.accentColor, size: 20),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(skill.title,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        PowerMeterBar(
-                          percent: percent,
-                          fillColor: skill.accentColor,
-                        ),
-                      ],
-                    ),
-                  ),
+            for (final skill in inProgress)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _InProgressRow(
+                  skill: skill,
+                  progress: _allProgress[skill.id]!,
+                  onOpen: () => _open(skill),
                 ),
-              );
-            }),
-
-          const SizedBox(height: 24),
-
-          // ── Trophy Case ──────────────────────────────────────────
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('TROPHY CASE',
-                  style: Theme.of(context).textTheme.titleLarge),
-              Text('${completed.length} earned',
-                  style: Theme.of(context).textTheme.bodySmall),
-            ],
-          ),
+              ),
           const SizedBox(height: 12),
+          _SectionHeader(
+              label: 'Trophy case', trailing: '${completed.length} EARNED'),
+          const SizedBox(height: 14),
           if (completed.isEmpty)
-            _EmptyRow(text: 'Complete your first mission to earn a trophy!')
+            const _EmptyNote(
+                text: 'Finish a mission to earn your first trophy.')
           else
-            GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              children: completed.map((skill) {
-                return InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => widget.onOpenSkill?.call(skill),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: skill.accentColor
-                          .withValues(alpha: isDark ? 0.3 : 0.2),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: outline, width: 2),
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Icon(skill.icon,
-                                size: 32, color: skill.accentColor),
-                            Positioned(
-                              bottom: -2,
-                              right: -2,
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                    color: AppColors.success,
-                                    shape: BoxShape.circle),
-                                child: const Icon(Icons.check,
-                                    size: 10, color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          skill.title,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+            _TrophyGrid(skills: completed, onOpen: _open),
+          const SizedBox(height: 28),
+          const HazardStrip(),
         ],
       ),
     );
   }
-
-  /// Progress toward the next rank threshold, as a 0..1 fraction for the bar.
-  double _rankProgressPercent(UserStatsModel stats) {
-    final int lowerBound;
-    final int upperBound;
-    switch (stats.currentRank) {
-      case DifficultyRank.novice:
-        lowerBound = 0;
-        upperBound = UserStatsModel.cadetThreshold;
-        break;
-      case DifficultyRank.cadet:
-        lowerBound = UserStatsModel.cadetThreshold;
-        upperBound = UserStatsModel.masterThreshold;
-        break;
-      case DifficultyRank.master:
-        return 1.0;
-    }
-    final span = upperBound - lowerBound;
-    if (span <= 0) return 1.0;
-    return ((stats.totalXp - lowerBound) / span).clamp(0, 1).toDouble();
-  }
 }
 
-class _EmptyRow extends StatelessWidget {
-  final String text;
-  const _EmptyRow({required this.text});
+class _SectionHeader extends StatelessWidget {
+  final String label;
+  final String trailing;
+
+  const _SectionHeader({required this.label, required this.trailing});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyMedium,
-        textAlign: TextAlign.center,
+    return Row(
+      children: [
+        StickerLabel(text: label),
+        const Spacer(),
+        Text(trailing, style: AppText.tag(size: 12, color: AppColors.muted)),
+      ],
+    );
+  }
+}
+
+/// Small card used when a list is empty.
+class _EmptyNote extends StatelessWidget {
+  final String text;
+
+  const _EmptyNote({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return BrutalCard(
+      padding: const EdgeInsets.all(16),
+      child: Text(text, style: AppText.bodyMuted()),
+    );
+  }
+}
+
+/// Big colored rank card: rank, total XP and progress toward the next rank.
+class _RankCard extends StatelessWidget {
+  final UserStatsModel stats;
+
+  const _RankCard({required this.stats});
+
+  static String _format(int n) {
+    final digits = n.toString();
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) buffer.write(',');
+      buffer.write(digits[i]);
+    }
+    return buffer.toString();
+  }
+
+  Color get _color {
+    switch (stats.currentRank) {
+      case DifficultyRank.novice:
+        return AppColors.categoryGardening;
+      case DifficultyRank.cadet:
+        return AppColors.categoryElectronics;
+      case DifficultyRank.master:
+        return AppColors.categoryHomeRepair;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final rank = stats.currentRank;
+    final isMax = rank == DifficultyRank.master;
+    final target = rank == DifficultyRank.novice
+        ? UserStatsModel.cadetThreshold
+        : UserStatsModel.masterThreshold;
+    final percent =
+        isMax ? 1.0 : (stats.totalXp / target).clamp(0.0, 1.0).toDouble();
+    final nextRankName = rank == DifficultyRank.novice ? 'CADET' : 'MASTER';
+
+    return BrutalCard(
+      color: _color,
+      shadowOffset: 6,
+      clipBehavior: Clip.hardEdge,
+      child: HalftoneBackground(
+        dotColor: AppColors.halftoneDot,
+        dotSpacing: 8,
+        dotRadius: 1.2,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _WhiteTag(
+                    leading: [
+                      for (var i = 0; i < rank.starCount; i++)
+                        const Icon(Icons.star, size: 14, color: AppColors.ink),
+                    ],
+                    text: 'RANK: ${rank.label.toUpperCase()}',
+                  ),
+                  _WhiteTag(text: stats.heroTier.title.toUpperCase()),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 10,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.end,
+                children: [
+                  Text('${_format(stats.totalXp)} XP',
+                      style: AppText.display(size: 44)),
+                  if (!isMax)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: _WhiteTag(text: '/ ${_format(target)} XP'),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              BlockProgressBar(
+                  percent: percent,
+                  blocks: 10,
+                  fillColor: AppColors.actionYellow),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  if (isMax)
+                    const _WhiteTag(
+                      leading: [
+                        Icon(Icons.emoji_events, size: 14, color: AppColors.ink)
+                      ],
+                      text: 'MAX RANK',
+                    )
+                  else ...[
+                    _WhiteTag(
+                      leading: const [
+                        Icon(Icons.bolt, size: 14, color: AppColors.ink)
+                      ],
+                      text:
+                          '${_format(stats.xpToNextRank ?? 0)} XP TO $nextRankName',
+                    ),
+                    _WhiteTag(text: '${(percent * 100).round()}% COMPLETE'),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WhiteTag extends StatelessWidget {
+  final String text;
+  final List<Widget> leading;
+
+  const _WhiteTag({required this.text, this.leading = const []});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border.fromBorderSide(AppTheme.tagBorder),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...leading,
+          if (leading.isNotEmpty) const SizedBox(width: 4),
+          Flexible(child: Text(text, style: AppText.tag(size: 12))),
+        ],
+      ),
+    );
+  }
+}
+
+class _InProgressRow extends StatelessWidget {
+  final SkillModel skill;
+  final ProgressModel progress;
+  final VoidCallback onOpen;
+
+  const _InProgressRow({
+    required this.skill,
+    required this.progress,
+    required this.onOpen,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final total = skill.lessons.length;
+    final done = progress.completedLessonIds.length;
+    final percent = progress.progressPercent(total);
+
+    return BrutalCard(
+      onTap: onOpen,
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: skill.accentColor,
+                  border: Border.fromBorderSide(AppTheme.tagBorder),
+                ),
+                child: Icon(skill.icon, size: 26, color: AppColors.ink),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      skill.title.toUpperCase(),
+                      style: AppText.display(size: 15, height: 1.15),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${CategoryStyle.shortLabel(skill.category)} • $done of $total episodes',
+                      style: AppText.caption(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: BlockProgressBar(
+                  percent: percent,
+                  blocks: 8,
+                  height: 14,
+                  fillColor: skill.accentColor,
+                ),
+              ),
+              const SizedBox(width: 12),
+              BrutalButton(
+                label: 'Resume',
+                icon: Icons.play_arrow,
+                expand: false,
+                height: 44,
+                fontSize: 13,
+                onPressed: onOpen,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Two-column wrap of trophy badges (no fixed aspect ratio, so no overflow).
+class _TrophyGrid extends StatelessWidget {
+  final List<SkillModel> skills;
+  final ValueChanged<SkillModel> onOpen;
+
+  const _TrophyGrid({required this.skills, required this.onOpen});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = 14.0;
+        final columns = constraints.maxWidth >= 640 ? 3 : 2;
+        final width = (constraints.maxWidth -
+                gap * (columns - 1) -
+                AppTheme.shadowOffset) /
+            columns;
+
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            for (final skill in skills)
+              SizedBox(
+                  width: width,
+                  child:
+                      _TrophyBadge(skill: skill, onTap: () => onOpen(skill))),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _TrophyBadge extends StatelessWidget {
+  final SkillModel skill;
+  final VoidCallback onTap;
+
+  const _TrophyBadge({required this.skill, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return BrutalCard(
+      onTap: onTap,
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          MissionCover(
+            skill: skill,
+            aspectRatio: 1.6,
+            iconBoxSize: 48,
+            bottomRight: XpTag(xp: skill.xpReward),
+          ),
+          Container(height: AppTheme.borderWidth, color: AppColors.ink),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  skill.title.toUpperCase(),
+                  style: AppText.display(size: 13, height: 1.15),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.success,
+                    border: Border.fromBorderSide(AppTheme.tagBorder),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.check, size: 14, color: AppColors.ink),
+                      const SizedBox(width: 4),
+                      Text('COMPLETED', style: AppText.tag()),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
