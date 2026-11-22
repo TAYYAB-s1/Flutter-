@@ -469,7 +469,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.white,
               border: Border.fromBorderSide(AppTheme.tagBorder),
             ),
@@ -513,7 +513,7 @@ class _MoreRow extends StatelessWidget {
               height: 44,
               decoration: BoxDecoration(
                 color: skill.accentColor,
-                border: Border.fromBorderSide(AppTheme.tagBorder),
+                border: const Border.fromBorderSide(AppTheme.tagBorder),
               ),
               child: Icon(skill.icon, size: 24, color: AppColors.ink),
             ),

@@ -40,7 +40,7 @@ class HeroGearChecklist extends StatelessWidget {
                 Expanded(child: Text('HERO GEAR', style: AppText.title(size: 18))),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.success,
                     border: Border.fromBorderSide(AppTheme.tagBorder),
                   ),
@@ -108,7 +108,7 @@ class _GearRow extends StatelessWidget {
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.success,
               border: Border.fromBorderSide(AppTheme.tagBorder),
             ),

@@ -217,7 +217,7 @@ class _SettingsRow extends StatelessWidget {
             Container(
               width: 40,
               height: 40,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.white,
                 border: Border.fromBorderSide(AppTheme.tagBorder),
               ),
@@ -294,7 +294,7 @@ class _TierOption extends StatelessWidget {
               height: 30,
               decoration: BoxDecoration(
                 color: selected ? AppColors.ink : AppColors.white,
-                border: Border.fromBorderSide(AppTheme.tagBorder),
+                border: const Border.fromBorderSide(AppTheme.tagBorder),
               ),
               child: selected
                   ? const Icon(Icons.check, size: 20, color: AppColors.actionYellow)

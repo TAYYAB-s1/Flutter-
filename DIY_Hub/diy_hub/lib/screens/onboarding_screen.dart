@@ -209,7 +209,7 @@ class _TierCard extends StatelessWidget {
                     height: 28,
                     decoration: BoxDecoration(
                       color: selected ? AppColors.ink : AppColors.white,
-                      border: Border.fromBorderSide(AppTheme.tagBorder),
+                      border: const Border.fromBorderSide(AppTheme.tagBorder),
                     ),
                     child: selected
                         ? const Icon(Icons.check, size: 20, color: AppColors.actionYellow)

@@ -89,7 +89,7 @@ class _MissionCompleteDialog extends StatelessWidget {
             else
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.cream,
                   border: Border.fromBorderSide(AppTheme.tagBorder),
                 ),

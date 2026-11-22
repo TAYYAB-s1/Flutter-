@@ -275,7 +275,7 @@ class _WhiteTag extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border.fromBorderSide(AppTheme.tagBorder),
       ),
@@ -321,7 +321,7 @@ class _InProgressRow extends StatelessWidget {
                 height: 48,
                 decoration: BoxDecoration(
                   color: skill.accentColor,
-                  border: Border.fromBorderSide(AppTheme.tagBorder),
+                  border: const Border.fromBorderSide(AppTheme.tagBorder),
                 ),
                 child: Icon(skill.icon, size: 26, color: AppColors.ink),
               ),
@@ -441,7 +441,7 @@ class _TrophyBadge extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.success,
                     border: Border.fromBorderSide(AppTheme.tagBorder),
                   ),

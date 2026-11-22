@@ -36,7 +36,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   Container(
                     width: 36,
                     height: 36,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.actionYellow,
                       border: Border.fromBorderSide(AppTheme.tagBorder),
                     ),

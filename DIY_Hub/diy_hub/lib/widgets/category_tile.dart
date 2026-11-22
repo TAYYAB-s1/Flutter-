@@ -49,7 +49,7 @@ class CategoryTile extends StatelessWidget {
                         fit: BoxFit.scaleDown,
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppColors.ink,
                             border: Border.fromBorderSide(AppTheme.tagBorder),
                           ),

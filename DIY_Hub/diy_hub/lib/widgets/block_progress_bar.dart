@@ -31,7 +31,7 @@ class BlockProgressBar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border.fromBorderSide(AppTheme.tagBorder),
       ),

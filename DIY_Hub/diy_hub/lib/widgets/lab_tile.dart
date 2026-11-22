@@ -42,7 +42,7 @@ class LabTile extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.ink,
                     border: Border.fromBorderSide(AppTheme.tagBorder),
                   ),
@@ -103,7 +103,7 @@ class _StackedIcons extends StatelessWidget {
               child: Container(
                 width: size,
                 height: size,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.white,
                   border: Border.fromBorderSide(AppTheme.tagBorder),
                 ),

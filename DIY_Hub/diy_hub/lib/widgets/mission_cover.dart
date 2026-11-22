@@ -69,7 +69,7 @@ class CoverIconBox extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border.fromBorderSide(AppTheme.border),
       ),

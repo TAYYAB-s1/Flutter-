@@ -30,7 +30,7 @@ class StickerLabel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: color,
-        border: Border.fromBorderSide(AppTheme.tagBorder),
+        border: const Border.fromBorderSide(AppTheme.tagBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

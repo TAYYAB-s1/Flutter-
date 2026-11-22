@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         height: 88,
                         decoration: BoxDecoration(
                           color: AppColors.actionYellow,
-                          border: Border.fromBorderSide(AppTheme.border),
+                          border: const Border.fromBorderSide(AppTheme.border),
                           boxShadow: AppTheme.hardShadow(offset: 6),
                         ),
                         child: const Icon(Icons.bolt, size: 54, color: AppColors.ink),

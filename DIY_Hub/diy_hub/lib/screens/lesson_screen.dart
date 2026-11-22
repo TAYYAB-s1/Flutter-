@@ -198,7 +198,7 @@ class _LessonScreenState extends State<LessonScreen> {
                   child: Container(
                     width: 48,
                     height: 48,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.white,
                       border: Border.fromBorderSide(AppTheme.tagBorder),
                     ),

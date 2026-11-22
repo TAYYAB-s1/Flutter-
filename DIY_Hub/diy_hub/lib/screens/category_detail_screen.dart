@@ -273,7 +273,7 @@ class _HeaderBlock extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.ink,
                       border: Border.fromBorderSide(AppTheme.tagBorder),
                     ),
@@ -327,7 +327,7 @@ class _StatBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border.fromBorderSide(AppTheme.tagBorder),
       ),

@@ -90,7 +90,7 @@ class _NavItem extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 6),
           decoration: BoxDecoration(
             color: active ? AppColors.actionYellow : AppColors.ink,
-            border: active ? Border.fromBorderSide(AppTheme.tagBorder) : null,
+            border: active ? const Border.fromBorderSide(AppTheme.tagBorder) : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

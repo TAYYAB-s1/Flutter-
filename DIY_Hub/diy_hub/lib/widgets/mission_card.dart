@@ -129,7 +129,7 @@ class _PlayButton extends StatelessWidget {
     return Container(
       width: 36,
       height: 36,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.actionYellow,
         border: Border.fromBorderSide(AppTheme.tagBorder),
       ),
@@ -158,7 +158,7 @@ class _BookmarkButton extends StatelessWidget {
           height: 36,
           decoration: BoxDecoration(
             color: isFavorite ? AppColors.actionYellow : AppColors.white,
-            border: Border.fromBorderSide(AppTheme.tagBorder),
+            border: const Border.fromBorderSide(AppTheme.tagBorder),
           ),
           child: Icon(
             isFavorite ? Icons.bookmark : Icons.bookmark_border,
@@ -179,7 +179,7 @@ class _DoneSticker extends StatelessWidget {
     return Container(
       width: 30,
       height: 30,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.success,
         border: Border.fromBorderSide(AppTheme.tagBorder),
       ),

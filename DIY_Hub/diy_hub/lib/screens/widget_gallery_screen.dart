@@ -88,10 +88,10 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          Wrap(
+          const Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: const [
+            children: [
               StatusPill(status: MissionStatus.notStarted),
               StatusPill(
                 status: MissionStatus.inProgress,
