@@ -50,6 +50,5 @@ class _GridPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _GridPainter oldDelegate) =>
-      oldDelegate.spacing != spacing;
+  bool shouldRepaint(covariant _GridPainter oldDelegate) => oldDelegate.spacing != spacing;
 }

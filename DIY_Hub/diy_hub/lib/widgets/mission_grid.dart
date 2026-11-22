@@ -31,10 +31,8 @@ class MissionGrid extends StatelessWidget {
         const gap = 14.0;
         final columns = constraints.maxWidth >= 640 ? 3 : 2;
         // Leave room on the right for the hard shadow of the last column.
-        final cardWidth = (constraints.maxWidth -
-                gap * (columns - 1) -
-                AppTheme.shadowOffset) /
-            columns;
+        final cardWidth =
+            (constraints.maxWidth - gap * (columns - 1) - AppTheme.shadowOffset) / columns;
 
         return Wrap(
           spacing: gap,
@@ -46,9 +44,8 @@ class MissionGrid extends StatelessWidget {
                 child: MissionCard(
                   skill: skill,
                   isFavorite: progress[skill.id]?.isFavorite ?? false,
-                  progressPercent: progress[skill.id]
-                          ?.progressPercent(skill.lessons.length) ??
-                      0,
+                  progressPercent:
+                      progress[skill.id]?.progressPercent(skill.lessons.length) ?? 0,
                   completed: progress[skill.id]?.isCompleted ?? false,
                   onFavoriteToggle: () => onToggleFavorite(skill),
                   onTap: () => onOpen(skill),

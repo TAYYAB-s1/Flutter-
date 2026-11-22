@@ -16,13 +16,7 @@ class AppBottomNav extends StatelessWidget {
     required this.onTap,
   });
 
-  static const List<String> labels = [
-    'HOME',
-    'LABS',
-    'STATS',
-    'SAVED',
-    'CONFIG'
-  ];
+  static const List<String> labels = ['HOME', 'LABS', 'STATS', 'SAVED', 'CONFIG'];
 
   static const List<IconData> _icons = [
     Icons.home_outlined,

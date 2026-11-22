@@ -42,16 +42,11 @@ class MissionCover extends StatelessWidget {
           child: SizedBox.expand(
             child: Stack(
               children: [
-                Center(
-                    child: CoverIconBox(icon: skill.icon, size: iconBoxSize)),
-                if (topLeft != null)
-                  Positioned(top: 8, left: 8, child: topLeft!),
-                if (topRight != null)
-                  Positioned(top: 8, right: 8, child: topRight!),
-                if (bottomLeft != null)
-                  Positioned(bottom: 8, left: 8, child: bottomLeft!),
-                if (bottomRight != null)
-                  Positioned(bottom: 8, right: 8, child: bottomRight!),
+                Center(child: CoverIconBox(icon: skill.icon, size: iconBoxSize)),
+                if (topLeft != null) Positioned(top: 8, left: 8, child: topLeft!),
+                if (topRight != null) Positioned(top: 8, right: 8, child: topRight!),
+                if (bottomLeft != null) Positioned(bottom: 8, left: 8, child: bottomLeft!),
+                if (bottomRight != null) Positioned(bottom: 8, right: 8, child: bottomRight!),
               ],
             ),
           ),

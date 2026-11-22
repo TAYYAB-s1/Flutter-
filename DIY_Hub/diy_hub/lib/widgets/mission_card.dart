@@ -63,14 +63,12 @@ class MissionCard extends StatelessWidget {
                 skill: skill,
                 aspectRatio: 1.7,
                 iconBoxSize: compact ? 48 : 56,
-                topLeft:
-                    RankBadge(rank: skill.difficultyRank, showLabel: !compact),
+                topLeft: RankBadge(rank: skill.difficultyRank, showLabel: !compact),
                 topRight: XpTag(xp: skill.xpReward),
                 bottomLeft: completed ? const _DoneSticker() : null,
                 bottomRight: onFavoriteToggle == null
                     ? null
-                    : _BookmarkButton(
-                        isFavorite: isFavorite, onTap: onFavoriteToggle!),
+                    : _BookmarkButton(isFavorite: isFavorite, onTap: onFavoriteToggle!),
               ),
               Container(height: AppTheme.borderWidth, color: AppColors.ink),
               Padding(
@@ -80,8 +78,7 @@ class MissionCard extends StatelessWidget {
                   children: [
                     Text(
                       skill.title.toUpperCase(),
-                      style: AppText.display(
-                          size: compact ? 14 : 16, height: 1.15),
+                      style: AppText.display(size: compact ? 14 : 16, height: 1.15),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),

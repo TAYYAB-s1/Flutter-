@@ -40,9 +40,7 @@ class SegmentedStepBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: (i + 1) < current
                       ? doneColor
-                      : ((i + 1) == current
-                          ? currentColor
-                          : Colors.transparent),
+                      : ((i + 1) == current ? currentColor : Colors.transparent),
                   border: Border.all(color: outline, width: 2),
                 ),
               ),

@@ -1,4 +1,3 @@
-
 // lib/widgets/comic_burst_badge.dart
 // A jagged starburst shape with short bold text inside, used for
 // "POW!", "NEW!", "HOT!", "ZAP!" style accent labels across the app.

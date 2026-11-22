@@ -60,12 +60,7 @@ class _BrutalCardState extends State<BrutalCard> {
         color: widget.color,
         border: Border.all(color: AppColors.ink, width: widget.borderWidth),
         boxShadow: shadow > 0
-            ? [
-                BoxShadow(
-                    color: widget.shadowColor,
-                    offset: Offset(shadow, shadow),
-                    blurRadius: 0)
-              ]
+            ? [BoxShadow(color: widget.shadowColor, offset: Offset(shadow, shadow), blurRadius: 0)]
             : const [],
       ),
       child: widget.child,

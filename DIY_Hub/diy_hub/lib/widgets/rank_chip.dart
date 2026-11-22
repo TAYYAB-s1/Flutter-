@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_theme.dart';
+import '../models/skill_model.dart';
 import '../models/user_stats_model.dart';
 
 class RankChip extends StatelessWidget {

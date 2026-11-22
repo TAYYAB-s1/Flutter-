@@ -24,8 +24,7 @@ class StickerLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fg =
-        textColor ?? (color == AppColors.ink ? AppColors.white : AppColors.ink);
+    final fg = textColor ?? (color == AppColors.ink ? AppColors.white : AppColors.ink);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

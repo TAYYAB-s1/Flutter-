@@ -37,11 +37,9 @@ class HeroGearChecklist extends StatelessWidget {
               children: [
                 const Icon(Icons.inventory_2, size: 20, color: AppColors.ink),
                 const SizedBox(width: 10),
-                Expanded(
-                    child: Text('HERO GEAR', style: AppText.title(size: 18))),
+                Expanded(child: Text('HERO GEAR', style: AppText.title(size: 18))),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.success,
                     border: Border.fromBorderSide(AppTheme.tagBorder),
@@ -56,9 +54,7 @@ class HeroGearChecklist extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             child: Row(
               children: [
-                Expanded(
-                    child: Text('ITEM',
-                        style: AppText.tag(color: AppColors.white))),
+                Expanded(child: Text('ITEM', style: AppText.tag(color: AppColors.white))),
                 Text('READY', style: AppText.tag(color: AppColors.white)),
               ],
             ),
@@ -92,8 +88,7 @@ class _GearRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         border: showDivider
-            ? const Border(
-                bottom: BorderSide(color: AppColors.lightDivider, width: 2))
+            ? const Border(bottom: BorderSide(color: AppColors.lightDivider, width: 2))
             : null,
       ),
       child: Row(
@@ -108,8 +103,7 @@ class _GearRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(label,
-                style: AppText.body(size: 14, weight: FontWeight.w600)),
+            child: Text(label, style: AppText.body(size: 14, weight: FontWeight.w600)),
           ),
           const SizedBox(width: 8),
           Container(

@@ -53,14 +53,12 @@ class TechTag extends StatelessWidget {
 
   /// "MAKER" with a tier-colored bullet.
   factory TechTag.tier(HeroTier tier, {Key? key}) {
-    return TechTag(
-        key: key, label: tierShortLabel(tier), bulletColor: tierColor(tier));
+    return TechTag(key: key, label: tierShortLabel(tier), bulletColor: tierColor(tier));
   }
 
   /// "4 EPISODES".
   factory TechTag.episodes(int count, {Key? key}) {
-    return TechTag(
-        key: key, label: '$count episodes', icon: Icons.layers_outlined);
+    return TechTag(key: key, label: '$count episodes', icon: Icons.layers_outlined);
   }
 
   @override

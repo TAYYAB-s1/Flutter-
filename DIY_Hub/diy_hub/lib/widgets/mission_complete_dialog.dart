@@ -123,8 +123,7 @@ class _MissionCompleteDialog extends StatelessWidget {
                             ),
                             const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Icon(Icons.arrow_forward,
-                                  size: 22, color: AppColors.ink),
+                              child: Icon(Icons.arrow_forward, size: 22, color: AppColors.ink),
                             ),
                             Text(
                               newRank!.label.toUpperCase(),

@@ -84,8 +84,7 @@ class _BrutalButtonState extends State<BrutalButton> {
     final shift = (tappable && _pressed) ? 2.0 : 0.0;
     final shadow = disabled ? 0.0 : AppTheme.shadowOffset - shift;
 
-    final textStyle =
-        AppText.display(size: widget.fontSize, color: fg, height: 1.1);
+    final textStyle = AppText.display(size: widget.fontSize, color: fg, height: 1.1);
     final iconWidget = widget.icon == null
         ? null
         : Icon(widget.icon, size: widget.fontSize + 5, color: fg);
@@ -102,10 +101,7 @@ class _BrutalButtonState extends State<BrutalButton> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (iconWidget != null && !widget.iconAfterLabel) ...[
-            iconWidget,
-            const SizedBox(width: 8)
-          ],
+          if (iconWidget != null && !widget.iconAfterLabel) ...[iconWidget, const SizedBox(width: 8)],
           Flexible(
             child: Text(
               widget.label.toUpperCase(),
@@ -114,10 +110,7 @@ class _BrutalButtonState extends State<BrutalButton> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          if (iconWidget != null && widget.iconAfterLabel) ...[
-            const SizedBox(width: 8),
-            iconWidget
-          ],
+          if (iconWidget != null && widget.iconAfterLabel) ...[const SizedBox(width: 8), iconWidget],
         ],
       );
     }
@@ -133,12 +126,7 @@ class _BrutalButtonState extends State<BrutalButton> {
         color: bg,
         border: Border.all(color: AppColors.ink, width: AppTheme.borderWidth),
         boxShadow: shadow > 0
-            ? [
-                BoxShadow(
-                    color: widget.shadowColor,
-                    offset: Offset(shadow, shadow),
-                    blurRadius: 0)
-              ]
+            ? [BoxShadow(color: widget.shadowColor, offset: Offset(shadow, shadow), blurRadius: 0)]
             : const [],
       ),
       child: content,
@@ -163,13 +151,10 @@ class _BrutalButtonState extends State<BrutalButton> {
 
     // Leave room on the right/bottom for the hard shadow.
     final padded = Padding(
-      padding: const EdgeInsets.only(
-          right: AppTheme.shadowOffset, bottom: AppTheme.shadowOffset),
+      padding: const EdgeInsets.only(right: AppTheme.shadowOffset, bottom: AppTheme.shadowOffset),
       child: semantic,
     );
 
-    return widget.expand
-        ? SizedBox(width: double.infinity, child: padded)
-        : padded;
+    return widget.expand ? SizedBox(width: double.infinity, child: padded) : padded;
   }
 }

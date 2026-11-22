@@ -36,12 +36,10 @@ class EpisodeListItem extends StatelessWidget {
 
   Color get _background {
     if (_locked) {
-      return Color.alphaBlend(
-          AppColors.locked.withValues(alpha: 0.4), AppColors.cream);
+      return Color.alphaBlend(AppColors.locked.withValues(alpha: 0.4), AppColors.cream);
     }
     if (_current) {
-      return Color.alphaBlend(
-          accentColor.withValues(alpha: 0.22), AppColors.white);
+      return Color.alphaBlend(accentColor.withValues(alpha: 0.22), AppColors.white);
     }
     return AppColors.white;
   }
@@ -62,8 +60,7 @@ class EpisodeListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _NumberBadge(
-                  number: number, state: state, accentColor: accentColor),
+              _NumberBadge(number: number, state: state, accentColor: accentColor),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

@@ -9,8 +9,7 @@ class PixelGridBackground extends StatelessWidget {
   final Widget child;
   final double spacing;
 
-  const PixelGridBackground(
-      {super.key, required this.child, this.spacing = 16});
+  const PixelGridBackground({super.key, required this.child, this.spacing = 16});
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +45,5 @@ class _GridPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _GridPainter oldDelegate) =>
-      oldDelegate.spacing != spacing;
+  bool shouldRepaint(covariant _GridPainter oldDelegate) => oldDelegate.spacing != spacing;
 }

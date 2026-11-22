@@ -22,8 +22,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light
-          .copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
       child: Container(
         color: AppColors.ink,
         child: SafeArea(
@@ -41,12 +40,10 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                       color: AppColors.actionYellow,
                       border: Border.fromBorderSide(AppTheme.tagBorder),
                     ),
-                    child:
-                        const Icon(Icons.bolt, size: 24, color: AppColors.ink),
+                    child: const Icon(Icons.bolt, size: 24, color: AppColors.ink),
                   ),
                   const SizedBox(width: 10),
-                  Text('DIYHUB',
-                      style: AppText.display(size: 20, color: AppColors.white)),
+                  Text('DIYHUB', style: AppText.display(size: 20, color: AppColors.white)),
                   const Spacer(),
                   if (stats != null) RankChip.fromStats(stats!),
                 ],

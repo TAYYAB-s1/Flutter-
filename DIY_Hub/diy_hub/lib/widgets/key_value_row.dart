@@ -34,9 +34,7 @@ class KeyValueRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Text(label.toUpperCase(),
-              style:
-                  AppText.tag(color: AppColors.muted, weight: FontWeight.w400)),
+          Text(label.toUpperCase(), style: AppText.tag(color: AppColors.muted, weight: FontWeight.w400)),
           const SizedBox(width: 6),
           const Expanded(
             child: SizedBox(
@@ -48,8 +46,7 @@ class KeyValueRow extends StatelessWidget {
           Flexible(
             child: highlight
                 ? Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     color: AppColors.actionYellow,
                     child: valueText,
                   )
