@@ -132,8 +132,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   /// Index of the first episode that is not done yet (0 when all are done,
   /// so "Replay" starts from the beginning).
   int get _nextLessonIndex {
-    final index =
-        widget.skill.lessons.indexWhere((l) => !_completedIds.contains(l.id));
+    final index = widget.skill.lessons.indexWhere((l) => !_completedIds.contains(l.id));
     return index == -1 ? 0 : index;
   }
 
@@ -141,13 +140,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   /// objective, and everything after it is locked.
   EpisodeState _stateFor(int index) {
     final lessons = widget.skill.lessons;
-    if (_completedIds.contains(lessons[index].id))
-      return EpisodeState.completed;
-    final firstIncomplete =
-        lessons.indexWhere((l) => !_completedIds.contains(l.id));
-    return index == firstIncomplete
-        ? EpisodeState.current
-        : EpisodeState.locked;
+    if (_completedIds.contains(lessons[index].id)) return EpisodeState.completed;
+    final firstIncomplete = lessons.indexWhere((l) => !_completedIds.contains(l.id));
+    return index == firstIncomplete ? EpisodeState.current : EpisodeState.locked;
   }
 
   // ── Actions ──────────────────────────────────────────────────────
@@ -155,8 +150,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   Future<void> _openLesson(int lessonIndex) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) =>
-            LessonScreen(skill: widget.skill, lessonIndex: lessonIndex),
+        builder: (_) => LessonScreen(skill: widget.skill, lessonIndex: lessonIndex),
       ),
     );
     // Reload progress in case an episode was completed (or the mission finished).
@@ -180,27 +174,22 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final skill = widget.skill;
-    final others = SkillsData.byCategory(skill.category)
-        .where((s) => s.id != skill.id)
-        .take(3)
-        .toList();
+    final others =
+        SkillsData.byCategory(skill.category).where((s) => s.id != skill.id).take(3).toList();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark
-          .copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
         body: SafeArea(
           bottom: false,
           child: _loading
-              ? const Center(
-                  child: CircularProgressIndicator(color: AppColors.ink))
+              ? const Center(child: CircularProgressIndicator(color: AppColors.ink))
               : ListView(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                   children: [
                     _buildTopRow(skill),
                     const SizedBox(height: 20),
-                    Text(skill.title.toUpperCase(),
-                        style: AppText.display(size: 32)),
+                    Text(skill.title.toUpperCase(), style: AppText.display(size: 32)),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 8,
@@ -240,8 +229,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
               child: BrutalButton(
                 label: _primaryLabel,
                 icon: Icons.arrow_forward,
-                onPressed:
-                    _loading ? null : () => _openLesson(_nextLessonIndex),
+                onPressed: _loading ? null : () => _openLesson(_nextLessonIndex),
               ),
             ),
             AppBottomNav(currentIndex: 1, onTap: _goToTab),
@@ -267,8 +255,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         Expanded(
           child: Text(
             'HOME / ${CategoryStyle.shortLabel(skill.category).toUpperCase()} / ${skill.title.toUpperCase()}',
-            style: AppText.tag(
-                size: 12, color: AppColors.muted, weight: FontWeight.w400),
+            style: AppText.tag(size: 12, color: AppColors.muted, weight: FontWeight.w400),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -305,8 +292,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                       children: [
                         Text(
                           _cursorLine,
-                          style:
-                              AppText.tag(size: 16, color: skill.accentColor),
+                          style: AppText.tag(size: 16, color: skill.accentColor),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -333,8 +319,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                       color: skill.accentColor,
                       border: Border.all(color: AppColors.white, width: 2),
                     ),
-                    child:
-                        Center(child: CoverIconBox(icon: skill.icon, size: 56)),
+                    child: Center(child: CoverIconBox(icon: skill.icon, size: 56)),
                   ),
                 ],
               ),
@@ -412,17 +397,12 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         children: [
           const StickerLabel(text: 'Mission specs', fontSize: 12),
           const SizedBox(height: 10),
-          KeyValueRow(
-              label: 'Category',
-              value: CategoryStyle.shortLabel(skill.category)),
+          KeyValueRow(label: 'Category', value: CategoryStyle.shortLabel(skill.category)),
           KeyValueRow(label: 'Tier', value: skill.minHeroTier.title),
-          KeyValueRow(
-              label: 'Difficulty',
-              value: '${'★' * rank.starCount} ${rank.label}'),
+          KeyValueRow(label: 'Difficulty', value: '${'★' * rank.starCount} ${rank.label}'),
           KeyValueRow(label: 'Time', value: '${skill.estimatedMinutes} min'),
           KeyValueRow(label: 'Episodes', value: '${skill.lessons.length}'),
-          KeyValueRow(
-              label: 'Reward', value: '+${skill.xpReward} XP', highlight: true),
+          KeyValueRow(label: 'Reward', value: '+${skill.xpReward} XP', highlight: true),
         ],
       ),
     );
@@ -440,8 +420,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             fontSize: 12,
           ),
           const SizedBox(height: 8),
-          for (final other in others)
-            _MoreRow(skill: other, onTap: () => _openOther(other)),
+          for (final other in others) _MoreRow(skill: other, onTap: () => _openOther(other)),
         ],
       ),
     );
@@ -469,9 +448,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
           EpisodeListItem(
             number: i + 1,
             title: skill.lessons[i].title,
-            subtitle: skill.lessons[i].steps.isNotEmpty
-                ? skill.lessons[i].steps.first
-                : '',
+            subtitle: skill.lessons[i].steps.isNotEmpty ? skill.lessons[i].steps.first : '',
             state: _stateFor(i),
             accentColor: skill.accentColor,
             onTap: () => _openLesson(i),
@@ -484,8 +461,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     final tip = _tips[skill.id.hashCode.abs() % _tips.length];
 
     return BrutalCard(
-      color: Color.alphaBlend(
-          skill.accentColor.withValues(alpha: 0.2), AppColors.white),
+      color: Color.alphaBlend(skill.accentColor.withValues(alpha: 0.2), AppColors.white),
       padding: const EdgeInsets.all(14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,8 +473,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
               color: AppColors.white,
               border: Border.fromBorderSide(AppTheme.tagBorder),
             ),
-            child: const Icon(Icons.lightbulb_outline,
-                size: 22, color: AppColors.ink),
+            child: const Icon(Icons.lightbulb_outline, size: 22, color: AppColors.ink),
           ),
           const SizedBox(width: 12),
           Expanded(

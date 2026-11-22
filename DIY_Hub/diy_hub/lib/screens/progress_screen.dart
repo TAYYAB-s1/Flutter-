@@ -65,8 +65,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget build(BuildContext context) {
     final stats = _stats;
     if (_loading || stats == null) {
-      return const Center(
-          child: CircularProgressIndicator(color: AppColors.ink));
+      return const Center(child: CircularProgressIndicator(color: AppColors.ink));
     }
 
     final inProgress = <SkillModel>[];
@@ -97,13 +96,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
           const SizedBox(height: 20),
           _RankCard(stats: stats),
           const SizedBox(height: 28),
-          _SectionHeader(
-              label: 'In progress', trailing: '${inProgress.length} ACTIVE'),
+          _SectionHeader(label: 'In progress', trailing: '${inProgress.length} ACTIVE'),
           const SizedBox(height: 14),
           if (inProgress.isEmpty)
-            const _EmptyNote(
-                text:
-                    'Nothing in progress yet. Pick a lab and start a mission!')
+            const _EmptyNote(text: 'Nothing in progress yet. Pick a lab and start a mission!')
           else
             for (final skill in inProgress)
               Padding(
@@ -115,12 +111,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ),
               ),
           const SizedBox(height: 12),
-          _SectionHeader(
-              label: 'Trophy case', trailing: '${completed.length} EARNED'),
+          _SectionHeader(label: 'Trophy case', trailing: '${completed.length} EARNED'),
           const SizedBox(height: 14),
           if (completed.isEmpty)
-            const _EmptyNote(
-                text: 'Finish a mission to earn your first trophy.')
+            const _EmptyNote(text: 'Finish a mission to earn your first trophy.')
           else
             _TrophyGrid(skills: completed, onOpen: _open),
           const SizedBox(height: 28),
@@ -198,8 +192,7 @@ class _RankCard extends StatelessWidget {
     final target = rank == DifficultyRank.novice
         ? UserStatsModel.cadetThreshold
         : UserStatsModel.masterThreshold;
-    final percent =
-        isMax ? 1.0 : (stats.totalXp / target).clamp(0.0, 1.0).toDouble();
+    final percent = isMax ? 1.0 : (stats.totalXp / target).clamp(0.0, 1.0).toDouble();
     final nextRankName = rank == DifficultyRank.novice ? 'CADET' : 'MASTER';
 
     return BrutalCard(
@@ -235,8 +228,7 @@ class _RankCard extends StatelessWidget {
                 runSpacing: 6,
                 crossAxisAlignment: WrapCrossAlignment.end,
                 children: [
-                  Text('${_format(stats.totalXp)} XP',
-                      style: AppText.display(size: 44)),
+                  Text('${_format(stats.totalXp)} XP', style: AppText.display(size: 44)),
                   if (!isMax)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 6),
@@ -245,10 +237,7 @@ class _RankCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              BlockProgressBar(
-                  percent: percent,
-                  blocks: 10,
-                  fillColor: AppColors.actionYellow),
+              BlockProgressBar(percent: percent, blocks: 10, fillColor: AppColors.actionYellow),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
@@ -256,18 +245,13 @@ class _RankCard extends StatelessWidget {
                 children: [
                   if (isMax)
                     const _WhiteTag(
-                      leading: [
-                        Icon(Icons.emoji_events, size: 14, color: AppColors.ink)
-                      ],
+                      leading: [Icon(Icons.emoji_events, size: 14, color: AppColors.ink)],
                       text: 'MAX RANK',
                     )
                   else ...[
                     _WhiteTag(
-                      leading: const [
-                        Icon(Icons.bolt, size: 14, color: AppColors.ink)
-                      ],
-                      text:
-                          '${_format(stats.xpToNextRank ?? 0)} XP TO $nextRankName',
+                      leading: const [Icon(Icons.bolt, size: 14, color: AppColors.ink)],
+                      text: '${_format(stats.xpToNextRank ?? 0)} XP TO $nextRankName',
                     ),
                     _WhiteTag(text: '${(percent * 100).round()}% COMPLETE'),
                   ],
@@ -405,20 +389,15 @@ class _TrophyGrid extends StatelessWidget {
       builder: (context, constraints) {
         const gap = 14.0;
         final columns = constraints.maxWidth >= 640 ? 3 : 2;
-        final width = (constraints.maxWidth -
-                gap * (columns - 1) -
-                AppTheme.shadowOffset) /
-            columns;
+        final width =
+            (constraints.maxWidth - gap * (columns - 1) - AppTheme.shadowOffset) / columns;
 
         return Wrap(
           spacing: gap,
           runSpacing: gap,
           children: [
             for (final skill in skills)
-              SizedBox(
-                  width: width,
-                  child:
-                      _TrophyBadge(skill: skill, onTap: () => onOpen(skill))),
+              SizedBox(width: width, child: _TrophyBadge(skill: skill, onTap: () => onOpen(skill))),
           ],
         );
       },

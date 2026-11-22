@@ -99,8 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// the detail screen closes and returns that tab index, which we switch to.
   Future<void> _openCategory(String category) async {
     final tab = await Navigator.of(context).push<int>(
-      MaterialPageRoute(
-          builder: (_) => CategoryDetailScreen(category: category)),
+      MaterialPageRoute(builder: (_) => CategoryDetailScreen(category: category)),
     );
     _loadData();
     if (tab != null && mounted) setState(() => _navIndex = tab);
@@ -133,9 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _scrollStartHere(int direction) {
     if (!_startHereController.hasClients) return;
     final max = _startHereController.position.maxScrollExtent;
-    final target = (_startHereController.offset + direction * 234)
-        .clamp(0.0, max)
-        .toDouble();
+    final target = (_startHereController.offset + direction * 234).clamp(0.0, max).toDouble();
     _startHereController.animateTo(
       target,
       duration: const Duration(milliseconds: 250),
@@ -216,8 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
         children: [
-          Text('BUILD REAL THINGS.\nLEVEL UP.',
-              style: AppText.display(size: 28)),
+          Text('BUILD REAL THINGS.\nLEVEL UP.', style: AppText.display(size: 28)),
           const SizedBox(height: 8),
           Text(
             '${SkillsData.all.length} MISSIONS · ${SkillsData.allCategories.length} LABS · NO ACCOUNT NEEDED',
@@ -226,10 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 16),
           _buildSearchRow(),
           const SizedBox(height: 24),
-          if (query.isNotEmpty)
-            ..._buildSearchResults(query)
-          else
-            ..._buildSections(),
+          if (query.isNotEmpty) ..._buildSearchResults(query) else ..._buildSections(),
         ],
       ),
     );
@@ -296,9 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       Align(
         alignment: Alignment.centerLeft,
-        child: StickerLabel(
-            text:
-                '${results.length} ${results.length == 1 ? 'result' : 'results'}'),
+        child: StickerLabel(text: '${results.length} ${results.length == 1 ? 'result' : 'results'}'),
       ),
       const SizedBox(height: 14),
       MissionGrid(
@@ -317,9 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final startHere = _tierPool.take(8).toList();
 
     return [
-      const Align(
-          alignment: Alignment.centerLeft,
-          child: StickerLabel(text: 'Pick a lab')),
+      const Align(alignment: Alignment.centerLeft, child: StickerLabel(text: 'Pick a lab')),
       const SizedBox(height: 14),
       GridView.count(
         crossAxisCount: 2,
@@ -339,16 +328,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       const SizedBox(height: 28),
-      const Align(
-          alignment: Alignment.centerLeft,
-          child: StickerLabel(text: 'Featured today')),
+      const Align(alignment: Alignment.centerLeft, child: StickerLabel(text: 'Featured today')),
       const SizedBox(height: 14),
       _buildFeaturedCard(featured),
       if (continueSkill != null) ...[
         const SizedBox(height: 28),
-        const Align(
-            alignment: Alignment.centerLeft,
-            child: StickerLabel(text: 'Continue')),
+        const Align(alignment: Alignment.centerLeft, child: StickerLabel(text: 'Continue')),
         const SizedBox(height: 14),
         _buildContinueCard(continueSkill),
       ],
@@ -359,22 +344,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: StickerLabel(
-                text:
-                    tier == null ? 'Start here' : 'Start here · ${tier.title}',
+                text: tier == null ? 'Start here' : 'Start here · ${tier.title}',
                 fontSize: 12,
               ),
             ),
           ),
           const SizedBox(width: 8),
-          _ArrowButton(
-              icon: Icons.chevron_left,
-              label: 'Scroll left',
-              onTap: () => _scrollStartHere(-1)),
+          _ArrowButton(icon: Icons.chevron_left, label: 'Scroll left', onTap: () => _scrollStartHere(-1)),
           const SizedBox(width: 8),
-          _ArrowButton(
-              icon: Icons.chevron_right,
-              label: 'Scroll right',
-              onTap: () => _scrollStartHere(1)),
+          _ArrowButton(icon: Icons.chevron_right, label: 'Scroll right', onTap: () => _scrollStartHere(1)),
         ],
       ),
       const SizedBox(height: 14),
@@ -394,9 +372,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: MissionCard(
                     skill: skill,
                     isFavorite: _allProgress[skill.id]?.isFavorite ?? false,
-                    progressPercent: _allProgress[skill.id]
-                            ?.progressPercent(skill.lessons.length) ??
-                        0,
+                    progressPercent:
+                        _allProgress[skill.id]?.progressPercent(skill.lessons.length) ?? 0,
                     completed: _allProgress[skill.id]?.isCompleted ?? false,
                     onFavoriteToggle: () => _toggleFavorite(skill),
                     onTap: () => _openSkill(skill),
@@ -426,9 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     final buttonLabel = status == MissionStatus.completed
         ? 'Replay mission'
-        : (status == MissionStatus.inProgress
-            ? 'Resume mission'
-            : 'Start mission');
+        : (status == MissionStatus.inProgress ? 'Resume mission' : 'Start mission');
 
     return BrutalCard(
       onTap: () => _openSkill(skill),
@@ -512,16 +487,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
-                    Text('$done of $total episodes done',
-                        style: AppText.caption()),
+                    Text('$done of $total episodes done', style: AppText.caption()),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          BlockProgressBar(
-              percent: percent, blocks: 8, fillColor: skill.accentColor),
+          BlockProgressBar(percent: percent, blocks: 8, fillColor: skill.accentColor),
           const SizedBox(height: 14),
           BrutalButton(
             label: 'Resume',
@@ -541,8 +514,7 @@ class _ArrowButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _ArrowButton(
-      {required this.icon, required this.label, required this.onTap});
+  const _ArrowButton({required this.icon, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

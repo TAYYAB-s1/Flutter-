@@ -60,8 +60,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Center(
-          child: CircularProgressIndicator(color: AppColors.ink));
+      return const Center(child: CircularProgressIndicator(color: AppColors.ink));
     }
 
     final favorites = SkillsData.all

@@ -117,16 +117,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         Text('SETTINGS', style: AppText.display(size: 30)),
         const SizedBox(height: 24),
-        const Align(
-            alignment: Alignment.centerLeft,
-            child: StickerLabel(text: 'Profile')),
+        const Align(alignment: Alignment.centerLeft, child: StickerLabel(text: 'Profile')),
         const SizedBox(height: 14),
         _SettingsRow(
           icon: Icons.groups,
           title: 'Hero tier',
-          subtitle: stats == null
-              ? '...'
-              : '${stats.heroTier.title} (${stats.heroTier.ageRangeLabel})',
+          subtitle: stats == null ? '...' : '${stats.heroTier.title} (${stats.heroTier.ageRangeLabel})',
           onTap: _pickHeroTier,
           trailing: BrutalButton(
             label: 'Change',
@@ -145,15 +141,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               : '${stats.currentRank.label} · ${stats.totalXp} XP',
         ),
         const SizedBox(height: 14),
-        const Align(
-            alignment: Alignment.centerLeft,
-            child: StickerLabel(text: 'About')),
+        const Align(alignment: Alignment.centerLeft, child: StickerLabel(text: 'About')),
         const SizedBox(height: 14),
         _SettingsRow(
           icon: Icons.info_outline,
           title: 'App version',
-          trailing:
-              Text(_appVersion.toUpperCase(), style: AppText.tag(size: 12)),
+          trailing: Text(_appVersion.toUpperCase(), style: AppText.tag(size: 12)),
         ),
         _SettingsRow(
           icon: Icons.star_border,
@@ -174,8 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           trailing: const _Chevron(),
         ),
         const SizedBox(height: 14),
-        const Align(
-            alignment: Alignment.centerLeft, child: StickerLabel(text: 'Data')),
+        const Align(alignment: Alignment.centerLeft, child: StickerLabel(text: 'Data')),
         const SizedBox(height: 14),
         _SettingsRow(
           icon: Icons.warning_amber_rounded,
@@ -246,10 +238,9 @@ class _SettingsRow extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       subtitle!,
-                      style: AppText.caption(
-                          color: onTap != null && color != AppColors.white
-                              ? AppColors.ink
-                              : AppColors.muted),
+                      style: AppText.caption(color: onTap != null && color != AppColors.white
+                          ? AppColors.ink
+                          : AppColors.muted),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -281,8 +272,7 @@ class _TierOption extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const _TierOption(
-      {required this.tier, required this.selected, required this.onTap});
+  const _TierOption({required this.tier, required this.selected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -294,9 +284,7 @@ class _TierOption extends StatelessWidget {
       label: '${tier.title}, ${tier.ageRangeLabel}',
       child: BrutalCard(
         onTap: onTap,
-        color: selected
-            ? Color.alphaBlend(accent.withValues(alpha: 0.35), AppColors.white)
-            : AppColors.white,
+        color: selected ? Color.alphaBlend(accent.withValues(alpha: 0.35), AppColors.white) : AppColors.white,
         shadowOffset: selected ? 6 : 4,
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -309,8 +297,7 @@ class _TierOption extends StatelessWidget {
                 border: Border.fromBorderSide(AppTheme.tagBorder),
               ),
               child: selected
-                  ? const Icon(Icons.check,
-                      size: 20, color: AppColors.actionYellow)
+                  ? const Icon(Icons.check, size: 20, color: AppColors.actionYellow)
                   : null,
             ),
             const SizedBox(width: 12),
@@ -318,8 +305,7 @@ class _TierOption extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(tier.title.toUpperCase(),
-                      style: AppText.display(size: 15, height: 1.15)),
+                  Text(tier.title.toUpperCase(), style: AppText.display(size: 15, height: 1.15)),
                   const SizedBox(height: 2),
                   Text(tier.ageRangeLabel, style: AppText.caption()),
                 ],

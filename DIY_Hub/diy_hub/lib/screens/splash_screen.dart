@@ -60,16 +60,13 @@ class _SplashScreenState extends State<SplashScreen> {
                           border: Border.fromBorderSide(AppTheme.border),
                           boxShadow: AppTheme.hardShadow(offset: 6),
                         ),
-                        child: const Icon(Icons.bolt,
-                            size: 54, color: AppColors.ink),
+                        child: const Icon(Icons.bolt, size: 54, color: AppColors.ink),
                       ),
                       const SizedBox(height: 28),
-                      Text('DIYHUB',
-                          style: AppText.display(size: 44, letterSpacing: 1)),
+                      Text('DIYHUB', style: AppText.display(size: 44, letterSpacing: 1)),
                       const SizedBox(height: 16),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: const BoxDecoration(
                           color: AppColors.white,
                           border: Border.fromBorderSide(AppTheme.tagBorder),
@@ -88,21 +85,16 @@ class _SplashScreenState extends State<SplashScreen> {
                           return Container(
                             width: 26,
                             height: 26,
-                            margin: EdgeInsets.only(
-                                right: i == _blockCount - 1 ? 0 : 8),
+                            margin: EdgeInsets.only(right: i == _blockCount - 1 ? 0 : 8),
                             decoration: BoxDecoration(
-                              color: filled
-                                  ? AppColors.actionYellow
-                                  : AppColors.white,
-                              border: const Border.fromBorderSide(
-                                  AppTheme.tagBorder),
+                              color: filled ? AppColors.actionYellow : AppColors.white,
+                              border: const Border.fromBorderSide(AppTheme.tagBorder),
                             ),
                           );
                         }),
                       ),
                       const SizedBox(height: 10),
-                      Text('LOADING',
-                          style: AppText.tag(size: 12, color: AppColors.muted)),
+                      Text('LOADING', style: AppText.tag(size: 12, color: AppColors.muted)),
                     ],
                   ),
                 ),
@@ -110,8 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             Text(
               'v1.0.0 · works offline',
-              style: AppText.tag(
-                  size: 11, color: AppColors.muted, weight: FontWeight.w400),
+              style: AppText.tag(size: 11, color: AppColors.muted, weight: FontWeight.w400),
             ),
             const SizedBox(height: 14),
             const HazardStrip(),

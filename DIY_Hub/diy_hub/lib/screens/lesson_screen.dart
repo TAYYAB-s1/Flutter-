@@ -26,8 +26,7 @@ class LessonScreen extends StatefulWidget {
   final SkillModel skill;
   final int lessonIndex;
 
-  const LessonScreen(
-      {super.key, required this.skill, required this.lessonIndex});
+  const LessonScreen({super.key, required this.skill, required this.lessonIndex});
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
@@ -81,8 +80,7 @@ class _LessonScreenState extends State<LessonScreen> {
     if (!isFinalEpisode) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) =>
-              LessonScreen(skill: skill, lessonIndex: widget.lessonIndex + 1),
+          builder: (_) => LessonScreen(skill: skill, lessonIndex: widget.lessonIndex + 1),
         ),
       );
       return;
@@ -94,8 +92,7 @@ class _LessonScreenState extends State<LessonScreen> {
     if (rankedUp) {
       final stats = await _progressService.getUserStats();
       newRank = stats.currentRank;
-      previousRank =
-          stats.copyWith(totalXp: stats.totalXp - xpEarned).currentRank;
+      previousRank = stats.copyWith(totalXp: stats.totalXp - xpEarned).currentRank;
     }
 
     if (!mounted) return;
@@ -114,15 +111,13 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget build(BuildContext context) {
     final skill = widget.skill;
     final lesson = skill.lessons[widget.lessonIndex];
-    final steps =
-        lesson.steps.isEmpty ? const ['Complete this episode.'] : lesson.steps;
+    final steps = lesson.steps.isEmpty ? const ['Complete this episode.'] : lesson.steps;
     final accent = skill.accentColor;
     final isFirstStep = _stepIndex == 0;
     final isLastStep = _stepIndex == steps.length - 1;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark
-          .copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
         backgroundColor: AppColors.ink,
         body: Column(
@@ -160,14 +155,9 @@ class _LessonScreenState extends State<LessonScreen> {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: AppColors.ink,
-                          border: Border.all(
-                              color: AppColors.white,
-                              width: AppTheme.borderWidth),
+                          border: Border.all(color: AppColors.white, width: AppTheme.borderWidth),
                           boxShadow: [
-                            BoxShadow(
-                                color: accent,
-                                offset: const Offset(6, 6),
-                                blurRadius: 0),
+                            BoxShadow(color: accent, offset: const Offset(6, 6), blurRadius: 0),
                           ],
                         ),
                         child: Text(
@@ -212,8 +202,7 @@ class _LessonScreenState extends State<LessonScreen> {
                       color: AppColors.white,
                       border: Border.fromBorderSide(AppTheme.tagBorder),
                     ),
-                    child:
-                        const Icon(Icons.close, size: 26, color: AppColors.ink),
+                    child: const Icon(Icons.close, size: 26, color: AppColors.ink),
                   ),
                 ),
               ),
@@ -269,9 +258,7 @@ class _LessonScreenState extends State<LessonScreen> {
                 loading: _submitting,
                 onPressed: _submitting
                     ? null
-                    : (isLastStep
-                        ? _completeEpisode
-                        : () => setState(() => _stepIndex++)),
+                    : (isLastStep ? _completeEpisode : () => setState(() => _stepIndex++)),
               ),
             ),
           ],

@@ -84,8 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
               children: [
-                Text('CHOOSE YOUR\nHERO TIER',
-                    style: AppText.display(size: 30)),
+                Text('CHOOSE YOUR\nHERO TIER', style: AppText.display(size: 30)),
                 const SizedBox(height: 8),
                 Text(
                   'Pick your level to unlock missions made for you.',
@@ -123,15 +122,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     label: "Let's go",
                     icon: Icons.arrow_forward,
                     loading: _submitting,
-                    onPressed: (_selectedTier != null && !_submitting)
-                        ? _confirmSelection
-                        : null,
+                    onPressed: (_selectedTier != null && !_submitting) ? _confirmSelection : null,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'WORKS OFFLINE. NO ACCOUNT REQUIRED.',
-                    style: AppText.tag(
-                        color: AppColors.muted, weight: FontWeight.w400),
+                    style: AppText.tag(color: AppColors.muted, weight: FontWeight.w400),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -194,11 +190,9 @@ class _TierCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(title.toUpperCase(),
-                                style: AppText.display(size: 20)),
+                            Text(title.toUpperCase(), style: AppText.display(size: 20)),
                             const SizedBox(height: 4),
-                            Text(ageRange.toUpperCase(),
-                                style: AppText.tag(size: 12)),
+                            Text(ageRange.toUpperCase(), style: AppText.tag(size: 12)),
                             const SizedBox(height: 8),
                             Text(blurb, style: AppText.body(size: 14)),
                           ],
@@ -218,8 +212,7 @@ class _TierCard extends StatelessWidget {
                       border: Border.fromBorderSide(AppTheme.tagBorder),
                     ),
                     child: selected
-                        ? const Icon(Icons.check,
-                            size: 20, color: AppColors.actionYellow)
+                        ? const Icon(Icons.check, size: 20, color: AppColors.actionYellow)
                         : null,
                   ),
                 ),
