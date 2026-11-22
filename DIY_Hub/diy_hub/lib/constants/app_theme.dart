@@ -49,8 +49,7 @@ class AppText {
     Color color = AppColors.ink,
     FontWeight weight = FontWeight.w500,
   }) {
-    return TextStyle(
-        fontSize: size, color: color, height: 1.4, fontWeight: weight);
+    return TextStyle(fontSize: size, color: color, height: 1.4, fontWeight: weight);
   }
 
   /// Secondary / muted paragraph text.
@@ -103,10 +102,8 @@ class AppTheme {
   /// Default hard-shadow offset (right and down).
   static const double shadowOffset = 4;
 
-  static const BorderSide border =
-      BorderSide(color: AppColors.ink, width: borderWidth);
-  static const BorderSide tagBorder =
-      BorderSide(color: AppColors.ink, width: tagBorderWidth);
+  static const BorderSide border = BorderSide(color: AppColors.ink, width: borderWidth);
+  static const BorderSide tagBorder = BorderSide(color: AppColors.ink, width: tagBorderWidth);
 
   /// Square, bordered shape used by buttons, cards, dialogs and sheets.
   static const RoundedRectangleBorder squareShape =
@@ -117,9 +114,7 @@ class AppTheme {
     double offset = shadowOffset,
     Color color = AppColors.ink,
   }) {
-    return [
-      BoxShadow(color: color, offset: Offset(offset, offset), blurRadius: 0)
-    ];
+    return [BoxShadow(color: color, offset: Offset(offset, offset), blurRadius: 0)];
   }
 
   /// The one and only theme. The app is light-only.
@@ -212,26 +207,19 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        hintStyle: AppText.tag(
-            size: 12, color: AppColors.muted, weight: FontWeight.w400),
-        border: const OutlineInputBorder(
-            borderRadius: BorderRadius.zero, borderSide: tagBorder),
-        enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.zero, borderSide: tagBorder),
-        focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.zero, borderSide: border),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        hintStyle: AppText.tag(size: 12, color: AppColors.muted, weight: FontWeight.w400),
+        border: const OutlineInputBorder(borderRadius: BorderRadius.zero, borderSide: tagBorder),
+        enabledBorder: const OutlineInputBorder(borderRadius: BorderRadius.zero, borderSide: tagBorder),
+        focusedBorder: const OutlineInputBorder(borderRadius: BorderRadius.zero, borderSide: border),
       ),
       chipTheme: base.chipTheme.copyWith(
         backgroundColor: AppColors.white,
         selectedColor: AppColors.actionYellow,
         labelStyle: AppText.tag(),
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero, side: tagBorder),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero, side: tagBorder),
       ),
-      dividerTheme:
-          const DividerThemeData(color: AppColors.ink, thickness: 2, space: 2),
+      dividerTheme: const DividerThemeData(color: AppColors.ink, thickness: 2, space: 2),
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.white,
         elevation: 0,
