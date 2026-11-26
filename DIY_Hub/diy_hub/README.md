@@ -153,3 +153,9 @@ This project was built for academic purposes as part of a university semester pr
 D:\Github\FLutter\Flutter-\DIY_Hub\diy_hub
 
 ```
+
+#then type this command in terminal adn run on chrome:
+
+```
+flutter run
+```
